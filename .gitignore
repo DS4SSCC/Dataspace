@@ -25,3 +25,9 @@ vite.config.ts.timestamp-*
 # IDEA's
 .vscode
 .idea
+
+/../generated/prisma
+
+/generated/prisma
+
+/generated/prisma
