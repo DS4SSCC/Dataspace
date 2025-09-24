@@ -1,5 +1,7 @@
 <script lang="ts">
     // Reactive state
+    import Form from "$lib/client/components/Form.svelte";
+
     let email = $state('');
     let password = $state('');
     let rememberMe = $state(false);
@@ -11,22 +13,6 @@
         email.trim() !== '' && password.trim() !== '' && email.includes('@')
     );
 
-    // Handle form submission
-    function handleSubmit(e) {
-        e.preventDefault();
-        if (!isValid) return;
-
-        submitting = true;
-        message = '';
-
-        // Simulate API delay
-        setTimeout(() => {
-            submitting = false;
-            message = `✅ Login successful${rememberMe ? ' (remembered)' : ''}! Welcome, ${email}`;
-            // In real app: redirect or store token
-            console.log('Login data:', { email, password, rememberMe });
-        }, 1200);
-    }
 </script>
 
 
@@ -39,7 +25,7 @@
             <div class="message success">{message}</div>
         {/if}
 
-        <form onsubmit={handleSubmit}>
+        <Form action="">
             <div class="form-group">
                 <label for="email">Email Address</label>
                 <input
@@ -78,7 +64,7 @@
             >
                 {submitting ? 'Logging in...' : 'Login'}
             </button>
-        </form>
+        </Form>
 
         <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #777;">
             Don’t have an account? <a href="#" style="color: #667eea; text-decoration: none;">Contact administrator</a>
@@ -106,7 +92,7 @@
         background: white;
         padding: 40px;
         border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         width: 100%;
         max-width: 420px;
     }
