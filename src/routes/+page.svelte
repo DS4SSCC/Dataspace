@@ -10,7 +10,7 @@ import Navbar from "$lib/client/components/navbar/Navbar.svelte";
     <div style="display: flex; align-items: center; justify-content: space-between; height: 100%; align-items: stretch;">
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
             <NavbarItem href="/" exact>Home</NavbarItem>
-            <NavbarItem href="/datasets" explore>Datasets</NavbarItem>
+            <NavbarItem href="/datasets">Datasets</NavbarItem>
         </div>
     </div>
 </Navbar>
@@ -19,7 +19,7 @@ import Navbar from "$lib/client/components/navbar/Navbar.svelte";
         <h1 style="font-size: calc(2rem + 2vw); color: white">Building the<br/>Future of Urban Data</h1>
         <p style="font-size: calc(.5rem + .5vw); color: white; margin-bottom: 3rem">Data Space for Smart and Sustainable Cities & Communities<br/>Empowering European urban innovation through
             trusted data sharing.</p>
-        <Button variant="primary" size="lg" href="/explore">Explore Datasets <Icon icon="arrow-right" margin="left"/></Button>
+        <Button variant="primary" size="lg" href="/datasets">Explore Datasets <Icon icon="arrow-right" margin="left"/></Button>
     </div>
 </section>
 <video
