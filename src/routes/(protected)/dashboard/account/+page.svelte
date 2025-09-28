@@ -1,5 +1,4 @@
-<script>
-    import {onMount} from 'svelte';
+<script lang="ts">
     import Page from "$lib/client/components/Page.svelte";
     import Section from "$lib/client/components/Section.svelte";
     import Button from "$lib/client/components/Button.svelte";
@@ -9,6 +8,8 @@
     import Card from "$lib/client/components/Card.svelte";
     import Flexbox from "$lib/client/components/Flexbox.svelte";
     import Input from "$lib/client/components/form/Input.svelte";
+    import {session} from "$lib/client/stores/session.store.svelte.js";
+    import Gravatar from "$lib/client/components/icons/Gravatar.svelte";
 
     // User account data
     let user = {
@@ -60,6 +61,23 @@
         formData = {...user};
         isEditing = false;
     }
+
+
+    // let gravatarAvatar = $state<string>(`https://gravatar.com/avatar?d=mp`)
+    // $effect.pre(() => {
+    //     const encoded = new TextEncoder().encode(session.user.email)
+    //     crypto.subtle.digest('SHA-256', encoded)
+    //         .then((digest) => {
+    //             const hashArray = Array.from(new Uint8Array(digest)); // convert buffer to byte array
+    //             return hashArray
+    //                 .map((b) => b.toString(16).padStart(2, "0"))
+    //                 .join("");
+    //         })
+    //         .then((hash) => gravatarAvatar = `https://gravatar.com/avatar/${hash}?d=mp`)
+    // })
+    //
+    // $inspect(session.user)
+
 </script>
 
 <Page title="Account Settings" description="Manage your account information and preferences">
@@ -70,14 +88,17 @@
             </Button>
             <Button variant="primary" on:click={saveAccount} disabled={isSaving}>
                 {#if isSaving}
-                    <Icon icon="spinner" spin margin="right"/> Saving...
+                    <Icon icon="spinner" spin margin="right"/>
+                    Saving...
                 {:else}
-                    <Icon icon="save" margin="right"/> Save Changes
+                    <Icon icon="save" margin="right"/>
+                    Save Changes
                 {/if}
             </Button>
         {:else}
             <Button variant="primary" on:click={() => isEditing = true}>
-                <Icon icon="pencil" margin="right"/> Edit Profile
+                <Icon icon="pencil" margin="right"/>
+                Edit Profile
             </Button>
         {/if}
     {/snippet}
@@ -87,11 +108,12 @@
             <Col>
                 <Card>
                     <Flexbox align="center" gap="1.5rem">
-                        <img src={user.avatar} alt="Profile" class="avatar" />
+                        <Gravatar email={session.user.email} alt="Profile" class="avatar"/>
+<!--                        <img src={gravatarAvatar} alt="Profile" class="avatar"/>-->
                         <div>
-                            <h2 style="margin-bottom: 0">{formData.name}</h2>
-                            <p class="text-secondary">{formData.email}</p>
-                            <p class="text-small">Member since {user.joinDate}</p>
+                            <h2 style="margin-bottom: 0">{session.user.full_name}</h2>
+                            <p class="text-secondary">{session.user.email}</p>
+                            <p class="text-small">Member since {session.user.created_at.toLocaleDateString()}</p>
                         </div>
                     </Flexbox>
                 </Card>
@@ -101,14 +123,15 @@
 
     <Section>
         <Row>
-            <Col width="6">
+            <Col width={6}>
                 <Card>
                     <h3>Profile Information</h3>
                     <div class="form-group">
                         <label for="name">Full Name</label>
                         <Input
                                 id="name"
-                                bind:value={formData.name}
+                                type="text"
+                                value={session.user.full_name}
                                 disabled={!isEditing}
                         />
                     </div>
@@ -118,7 +141,7 @@
                         <Input
                                 id="email"
                                 type="email"
-                                bind:value={formData.email}
+                                value={session.user.email}
                                 disabled={!isEditing}
                         />
                     </div>
@@ -236,7 +259,7 @@
                     <div class="activity-list">
                         <div class="activity-item">
                             <div class="activity-icon">
-                                <Icon icon="lock" />
+                                <Icon icon="lock"/>
                             </div>
                             <div class="activity-content">
                                 <p>Two-factor authentication enabled</p>
@@ -246,7 +269,7 @@
 
                         <div class="activity-item">
                             <div class="activity-icon">
-                                <Icon icon="envelope" />
+                                <Icon icon="envelope"/>
                             </div>
                             <div class="activity-content">
                                 <p>Email updated to {user.email}</p>
@@ -256,7 +279,7 @@
 
                         <div class="activity-item">
                             <div class="activity-icon">
-                                <Icon icon="sign-in" />
+                                <Icon icon="sign-in"/>
                             </div>
                             <div class="activity-content">
                                 <p>Logged in from new device</p>
@@ -271,7 +294,7 @@
 </Page>
 
 <style>
-    .avatar {
+    :global(.avatar) {
         width: 100px;
         height: 100px;
         border-radius: 50%;

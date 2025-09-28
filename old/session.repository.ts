@@ -1,6 +1,5 @@
 import {randomUUID} from "node:crypto";
 import {clearTimeout} from "node:timers";
-import id = $props.id;
 
 export type SessionOptions = {
     id: string,
@@ -84,7 +83,7 @@ export const SessionRepository = {
             const ref = sessions.values().find(({id}) => id === session.id)
             if (!ref) return false;
             ref.resetTTL(ttl)
-        }else{
+        } else {
             session.resetTTL(ttl)
         }
     }
