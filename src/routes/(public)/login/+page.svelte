@@ -31,7 +31,7 @@
         <Form action="" style="display: flex; flex-direction: column; row-gap: 1rem; width: 80%; margin: 0 auto; margin-bottom: 1rem">
             <Input label="Email" type="email" placeholder="Enter your Email" --bg="var(--color-background-tertiary)"/>
             <Input label="Password" type="password" placeholder="Enter Password" --bg="var(--color-background-tertiary)"/>
-            <Button variant="primary" type="submit">Login</Button>
+            <Button variant="primary" href="/dashboard">Login</Button>
         </Form>
         <span>
             Don’t have an account? <a href="#" style="color: #667eea; text-decoration: none;">Contact administrator</a>

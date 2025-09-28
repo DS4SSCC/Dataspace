@@ -1,5 +1,6 @@
 <script lang="ts">
     import type {Snippet} from "svelte";
+    import Section from "$lib/client/components/Section.svelte";
 
     let { children, title, description, suffix }:{
         title?: string,
@@ -11,20 +12,22 @@
 
 <div class="page">
     {#if title}
-        <header>
-            <div>
-                <h1>{title}</h1>
-                {#if description}<p>{description}</p>{/if}
-            </div>
-            {@render suffix?.()}
-        </header>
+        <Section>
+            <header>
+                <div>
+                    <h1>{title}</h1>
+                    {#if description}<p>{description}</p>{/if}
+                </div>
+                {@render suffix?.()}
+            </header>
+        </Section>
     {/if}
     {@render children?.()}
 </div>
 
 <style>
     .page{
-        padding-top: 70px;
+        padding-top: calc(70px + 1.5rem);
         padding-left: 2rem;
         padding-right: 2rem;
         header{
