@@ -1,0 +1,61 @@
+@use "sass:map";
+$breakpoints: (
+        "xs": 0,
+        "sm": 576px,
+        "md": 768px,
+        "lg": 992px,
+        "xl": 1200px,
+        "xxl": 1400px
+);
+
+/*
+Usage example:
+
+@include min-width(sm) {
+  width: 90%;
+}
+*/
+
+@mixin min-width($breakpoint) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    $breakpoint-value: map.get($breakpoints, $breakpoint);
+    @media (min-width: #{$breakpoint-value}) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint '#{$breakpoint}' not found in \$breakpoints map.";
+  }
+}
+
+/*
+Usage example:
+
+@include max-width(md) {
+  width: 90%;
+}
+*/
+@mixin max-width($breakpoint) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    $breakpoint-value: map.get($breakpoints, $breakpoint);
+    @media (max-width: $breakpoint-value - 1) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint '#{$breakpoint}' not found in \$breakpoints map.";
+  }
+}
+
+
+// Display variables
+$display-utilities: none, block, flex, inline, inline-block, inline-flex, table-cell;
+@mixin display-util-variables {
+  @each $breakpoint, $value in $breakpoints {
+    @include min-width($breakpoint) {
+      @each $display in $display-utilities {
+        .d-#{$breakpoint}-#{$display} {
+          display: #{$display} !important;
+        }
+      }
+    }
+  }
+}

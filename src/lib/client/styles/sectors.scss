@@ -1,0 +1,40 @@
+// Define a sector color map for easier maintenance
+$sector-colors: (
+        "sector-mobility": #2b8fd9,      // blue
+        "sector-energy": #27ae60,        // green
+        "sector-environment": #16a085,   // teal
+        "sector-waste": #f39c12,         // orange
+        "sector-health": #e74c3c,        // red
+        "sector-safety": #8e44ad,        // purple
+        "sector-housing": #d35400,       // dark orange
+        "sector-economy": #2980b9,       // strong blue
+        "sector-culture": #c0392b,       // brick red
+        "sector-governance": #7f8c8d     // gray
+);
+
+// Better text color function
+@function text-color($bg) {
+  $l: lightness($bg);
+
+  @if $l > 60 {
+    // background is light → use a darker shade of the same color
+    @return darken($bg, 50%);
+  } @else {
+    // background is dark → use a lighter shade of the same color
+    @return lighten($bg, 50%);
+  }
+}
+
+// Border color derived from background
+@function border-color($bg) {
+  $l: lightness($bg);
+
+  @if $l > 60 {
+    // light background → darker border
+    @return darken($bg, 15%);
+  } @else {
+    // dark background → lighter border
+    @return lighten($bg, 15%);
+  }
+}
+

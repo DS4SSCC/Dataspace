@@ -1,0 +1,79 @@
+/* _reset.scss */
+
+/* Reset box model to border-box */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* Remove default margins and padding */
+body, h1, h2, h3, h4, h5, h6, p, ol, ul, figure, blockquote {
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove list styles */
+ul, ol {
+  padding-left: 2rem;
+}
+
+.list-unstyled{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Reset body styles */
+body {
+  min-height: 100dvh;
+  font-family: sans-serif;
+  line-height: 1.5;
+  background-color: white;
+  color: black;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  margin: 0;
+}
+
+/* Anchor reset */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Image reset */
+img, picture {
+  max-width: 100%;
+}
+
+/* Form elements reset */
+input, button, textarea, select {
+  font: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove borders from interactive elements */
+button, input {
+  border: none;
+  outline: none;
+}
+
+/* Ensure buttons look consistent */
+button {
+  cursor: pointer;
+  background: none;
+}
+
+/* Table reset */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+/* Horizontal rule */
+hr{
+  border-color: rgba(255, 255, 255, 0.25);
+  margin-bottom: 1.5rem;
+}

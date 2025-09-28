@@ -1,0 +1,8 @@
+// Mixin to generate CSS variables from a SCSS map
+// $map: The SCSS map containing the variables
+// $prefix: (Optional) A prefix to add to each CSS variable
+@mixin generate-css-variables($map, $prefix: "") {
+  @each $key, $value in $map {
+    --#{$prefix}#{$key}: #{$value};
+  }
+}

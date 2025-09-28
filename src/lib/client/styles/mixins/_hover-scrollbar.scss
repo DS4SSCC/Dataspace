@@ -1,0 +1,28 @@
+@mixin scrollbar(
+  $thumb-color: var(--color-scrollbar-thumb-color),
+  $track-color: var(--color-scrollbar-track-color),
+  $track-width: 8px
+) {
+
+
+  // Chrome, Safari and Edge
+  &::-webkit-scrollbar {
+    width: var(--track-width, $track-width);
+    height: var(--track-width, $track-width);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $thumb-color;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $thumb-color;
+    border-radius: 4px;
+    background-clip: padding-box;
+    border: 2px solid transparent; // Optional: gives padding effect
+  }
+
+  // Firefox
+  scrollbar-width: thin; // or 'auto'
+  scrollbar-color: $thumb-color var(--track-color, $track-color);
+}

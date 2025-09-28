@@ -1,0 +1,40 @@
+@use "variables" as variables;
+@use "sass:map";
+
+
+body {
+  font-family: variables.$font-family-base;
+  font-size: map.get(variables.$font-sizes, "body");
+  line-height: 1.6;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+p {
+  margin-bottom: map.get(variables.$font-spacing, "body");
+}
+
+
+
+// Loop through each element in $font-sizes and apply styles
+@each $element, $size in variables.$font-sizes {
+  @if $element != "body" {
+    #{$element}, .#{$element} {
+      font-family: variables.$font-family-base;
+      margin-bottom: map.get(variables.$font-spacing, $element);
+      font-weight: 500;
+      font-size: $size;
+      line-height: map.get(variables.$line-heights, $element);
+      //@if $element != "h1" {
+      //  &:not(:first-child) {
+      //    $spacing: map.get(variables.$font-spacing, $element);
+      //    margin-top: if($spacing != null, $spacing * 3, 0); // Default to 0 if null
+      //  }
+      //}
+    }
+  }
+}
+
+

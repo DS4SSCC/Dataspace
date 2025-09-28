@@ -1,0 +1,32 @@
+@use "sass:map";
+@use "../base/variables" as variables;
+@mixin base_input {
+  flex: 1;
+  display: block;
+  width: 100%;
+  font-family: inherit;
+  font-weight: normal;
+  appearance: none;
+  color: currentColor;
+  transition: .15s;
+  border-radius: var(--border-radius, map.get(variables.$border-radii, "md"));
+  padding: .375rem .75rem;
+  background-color: var(--bg, var(--color-background-primary));
+  background-clip: padding-box;
+  border: var(--border, solid 1px var(--color-border-primary)) !important;
+  min-height: 34px;
+}
+
+@mixin base_label{
+  display: block;
+  margin-bottom: .25rem;
+  font-weight: 600;
+  font-size: map.get(variables.$font-sizes, "small");;
+}
+
+@mixin base_description{
+  display: block;
+  margin-bottom: .25rem;
+  color: var(--color-text-secondary);
+  font-size: map.get(variables.$font-sizes, "small");;
+}
