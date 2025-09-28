@@ -30,6 +30,7 @@
         padding-top: calc(70px + 1.5rem);
         padding-left: 2rem;
         padding-right: 2rem;
+        padding-bottom: 70px;
         header{
             display: flex;
             justify-content: space-between;

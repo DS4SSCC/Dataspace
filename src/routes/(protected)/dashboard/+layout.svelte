@@ -14,7 +14,7 @@
     <div style="display: flex; align-items: center; justify-content: space-between; height: 100%; align-items: stretch;">
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
             <NavbarItem href="/dashboard/analytics" exact>Analytics</NavbarItem>
-            <NavbarItem href="/dashboard/profile" exact>Account</NavbarItem>
+            <NavbarItem href="/dashboard/account" exact>Account</NavbarItem>
             <NavbarItem href="/dashboard/datasets" exact>Datasets</NavbarItem>
             <NavbarItem href="/dashboard/requests" exact>Requests</NavbarItem>
             <NavbarItem href="/dashboard/api" exact>API</NavbarItem>

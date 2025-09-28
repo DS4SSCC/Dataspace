@@ -20,10 +20,10 @@
 
 <Card fit style="display: flex; flex-direction: column; justify-content: space-between">
     <div>
-        <Flexbox justify="space-between" gap=".5rem">
-            <SectorButton sector={currentSector} size="xs" style="margin-bottom: 1rem"/>
+        <Flexbox justify="space-between" align="center" gap=".5rem" style="margin-bottom: 1rem">
+            <SectorButton sector={currentSector} size="xs"/>
             <!-- DCAT uses dct:modified -->
-            <span style="color: var(--color-text-secondary)">{dataset["dct:modified"]}</span>
+            <span style="font-size: small; color: var(--color-text-secondary)">{dataset["dct:modified"]}</span>
         </Flexbox>
 
         <div>
@@ -35,15 +35,15 @@
     </div>
 
 
-    <Flexbox justify="space-between" align="center" style="margin-top: 1rem;">
+    <Flexbox justify="flex-end" align="center" style="margin-top: 1rem;">
         <!-- dcat:keyword -->
-        {#if dataset["dcat:keyword"]}
-            <div style="display: flex; flex-wrap: wrap; gap: .5rem">
-                {#each dataset["dcat:keyword"] as tag}
-                    <Button size="xs">{tag}</Button>
-                {/each}
-            </div>
-        {/if}
+        <!--{#if dataset["dcat:keyword"]}-->
+        <!--    <div style="display: flex; flex-wrap: wrap; gap: .5rem">-->
+        <!--        {#each dataset["dcat:keyword"] as tag}-->
+        <!--            <Button size="xs">{tag}</Button>-->
+        <!--        {/each}-->
+        <!--    </div>-->
+        <!--{/if}-->
 
         {#if dataset["dct:publisher"]}
             <Tooltip text={dataset["dct:publisher"]['foaf:name']}>

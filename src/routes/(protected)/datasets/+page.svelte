@@ -23,7 +23,7 @@
             <h3>Sectors</h3>
             <div style="display: flex; gap: .5rem; flex-wrap: wrap;">
                 {#each data.sectors as sector}
-                    <SectorButton {sector} size="sm" style="white-space: nowrap">{sector.name}</SectorButton>
+                    <SectorButton {sector} size="xs" style="white-space: nowrap">{sector.name}</SectorButton>
                 {/each}
             </div>
         </div>
@@ -37,7 +37,7 @@
         </div>
     </div>
     <Page title="Datasets">
-        <Row xs={1} md={2} lg={3}>
+        <Row xs={1} md={2} xxl={3}>
             {#each data.datasets as dataset}
                 <Col>
                     <DatasetCard {dataset} fit/>
@@ -62,20 +62,6 @@
       flex: 1;
       padding-top: 0;
     }
-  }
-
-
-  .search-input {
-    background: transparent;
-    border: none;
-    font-size: xx-large;
-    border-bottom: solid 1px var(--color-border-primary);
-    outline: none;
-    display: block;
-    width: 100%;
-    margin-bottom: 1rem;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
   }
 </style>
 
