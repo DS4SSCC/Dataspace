@@ -34,3 +34,20 @@ model User {
   //relations
   sessions Session[]
 }
+
+model Catalog {
+  id          String    @id @default(cuid())
+  name        String    @unique // Unieke naam voor de catalogus (bijv. 'eindhoven-open-data')
+  title       String // Leesbare titel (bijv. 'Eindhoven Open Data Portal')
+  description String? // Optionele beschrijving
+  apiStandard String // Bijv. 'opendatasoft_explore_v2', 'ckan_api_v3', 'socrata'
+  apiUrl      String // Volledige basis-URL van de API (bijv. https://data.eindhoven.nl/api/explore/v2.1)
+  apiKey      String? // Optionele API-sleutel voor authenticatie
+  // Optionele velden die automatisch kunnen worden ingevuld of gebruikt voor beheer
+  isActive    Boolean   @default(true) // Of de catalogus momenteel wordt gesynchroniseerd
+  lastSync    DateTime? // Datum van de laatste synchronisatie
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("catalogs")
+}

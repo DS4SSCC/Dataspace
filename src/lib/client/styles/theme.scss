@@ -1,5 +1,5 @@
 :root{
-  --color-primary: #7dd956;
+  --color-primary: rgb(139, 195, 74);
   --color-secondary: #3CC0CF;
   --color-primary-dark: #189C85;
   --color-secondary-dark: #4DC0D3;
@@ -17,5 +17,8 @@
   --color-warning: #FCD53F;      // Warning color
   --color-danger: #fa4644;       // Danger color
   --color-info: #0074BA;         // Info color
+
+  --color-text-light: white;
+  --color-text-dark: black;
 }
 

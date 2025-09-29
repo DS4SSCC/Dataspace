@@ -4,18 +4,26 @@ import Navbar from "$lib/client/components/navbar/Navbar.svelte";
     import NavbarItem from "$lib/client/components/navbar/NavbarItem.svelte";
     import Button from "$lib/client/components/Button.svelte";
     import Icon from "$lib/client/components/icons/Icon.svelte";
+    import BrandIcon from "$lib/client/components/icons/BrandIcon.svelte";
+    import Flexbox from "$lib/client/components/Flexbox.svelte";
 </script>
 
-<Navbar style="filter: invert(1);">
+<Navbar --color="var(--color-text-light)" --color-inactive="silver" --color-active="var(--color-primary)">
     <div style="display: flex; align-items: center; justify-content: space-between; height: 100%; align-items: stretch;">
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
             <NavbarItem href="/" exact>Home</NavbarItem>
             <NavbarItem href="/datasets">Datasets</NavbarItem>
+            <NavbarItem href="/datasets">Catalogs</NavbarItem>
         </div>
     </div>
 </Navbar>
 <section class="landing-hero">
     <div style="padding: 2rem">
+        <Flexbox align="center" columnGap="1rem" style="margin-bottom: 1rem;">
+            <BrandIcon --width="50px"/>
+            <h1 style="margin-bottom: 0; color: var(--color-text-light)">DS4SSCC</h1>
+        </Flexbox>
+
         <h1 style="font-size: calc(2rem + 2vw); color: white">Building the<br/>Future of Urban Data</h1>
         <p style="font-size: calc(.5rem + .5vw); color: white; margin-bottom: 3rem">Data Space for Smart and Sustainable Cities & Communities<br/>Empowering European urban innovation through
             trusted data sharing.</p>
