@@ -20,34 +20,26 @@
     let addCatalogModal = $state({show: false})
 </script>
 
-<div class="sidebar-layout">
-    <div style="width: 350px;">
-        <h3>Search</h3>
-        <Card style="margin-bottom: 1rem;">
-            <Input type="text" id="search" placeholder="Search..." --bg="transparent" --border="none"/>
-        </Card>
-    </div>
-    <Page title="Catalogs" description="Explore related data portals from municipal, national, and private sectors">
-        {#snippet suffix()}
-            <Button onclick={()=> addCatalogModal.show = true}>
-                <Icon icon="plus-lg" margin="right"/>
-                Add Catalog
-            </Button>
-        {/snippet}
-        <Section>
-            <Row xs={1} md={2} lg={3}>
-                {#each data.catalogs as catalog}
-                    <Col>
-                        <CatalogCard {catalog} fit onclick={()=> goto(`/catalogs/${catalog.id}`)}/>
-                    </Col>
-                {/each}
-            </Row>
-        </Section>
+<Page title="Catalogs" description="Explore related data portals from municipal, national, and private sectors">
+    {#snippet suffix()}
+        <Button onclick={()=> addCatalogModal.show = true}>
+            <Icon icon="plus-lg" margin="right"/>
+            Add Catalog
+        </Button>
+    {/snippet}
+    <Section>
+        <Row xs={1} md={2} lg={3}>
+            {#each data.catalogs as catalog}
+                <Col>
+                    <CatalogCard {catalog} fit onclick={()=> goto(`/catalogs/${catalog.id}`)}/>
+                </Col>
+            {/each}
+        </Row>
+    </Section>
 
 
-<!--        <pre><code>{JSON.stringify(data.catalogs, null, 2)}</code></pre>-->
-    </Page>
-</div>
+    <!--        <pre><code>{JSON.stringify(data.catalogs, null, 2)}</code></pre>-->
+</Page>
 
 <Modal title="Add Catalog" bind:show={addCatalogModal.show}>
     <Form action="?/addCatalog" method="POST">
@@ -74,37 +66,5 @@
         </Flexbox>
     </Form>
 </Modal>
-
-<style lang="scss">
-  @use "$lib/client/styles/mixins/responsive" as responsive;
-
-  .sidebar-layout {
-    padding-top: calc(70px + 2rem);
-    display: flex;
-
-    @include responsive.min-width(md) {
-      padding-left: 2rem;
-    }
-
-    :global(.page) {
-      flex: 1;
-      padding-top: 0;
-    }
-  }
-
-
-  .search-input {
-    background: transparent;
-    border: none;
-    font-size: xx-large;
-    border-bottom: solid 1px var(--color-border-primary);
-    outline: none;
-    display: block;
-    width: 100%;
-    margin-bottom: 1rem;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-  }
-</style>
 
 
