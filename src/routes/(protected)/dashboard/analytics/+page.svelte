@@ -6,9 +6,7 @@
     import Section from "$lib/client/components/Section.svelte";
     import Row from "$lib/client/components/grid/Row.svelte";
     import Col from "$lib/client/components/grid/Col.svelte";
-    import Card from "$lib/client/components/Card.svelte";
     import AnalyticsValueCard from "$lib/client/components/cards/AnalyticsValueCard.svelte";
-    import Icon from "$lib/client/components/icons/Icon.svelte";
     import AnalyticsChartCard from "$lib/client/components/cards/AnalyticsChartCard.svelte";
 
     let accessChartRef;
