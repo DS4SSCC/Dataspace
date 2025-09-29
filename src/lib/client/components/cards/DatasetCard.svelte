@@ -115,9 +115,9 @@
                 {#if currentSector}
                     <SectorButton sector={currentSector} size="xs"/>
                 {/if}
-                {#if dataset.modified}
-                    <span style="font-size: small; color: var(--color-text-secondary)">{formatDate(dataset.modified)}</span>
-                {/if}
+                <!--{#if dataset.modified}-->
+                <!--    <span style="font-size: small; color: var(&#45;&#45;color-text-secondary)">{formatDate(dataset.modified)}</span>-->
+                <!--{/if}-->
             </Flexbox>
 
             <div>

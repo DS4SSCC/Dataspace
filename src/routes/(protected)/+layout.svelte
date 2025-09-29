@@ -14,7 +14,7 @@
             <NavbarItem href="/catalogs">Catalogs</NavbarItem>
         </div>
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
-            <NavbarItem href="/login">
+            <NavbarItem href="/login" --color-inactive="var(--color-text-primary)">
                 Logged in as Steven Slaa
             </NavbarItem>
         </div>
