@@ -13,6 +13,7 @@
     import SectionHeader from "$lib/client/components/SectionHeader.svelte";
     import Card from "$lib/client/components/Card.svelte";
     import {goto} from "$app/navigation";
+    import SectorButton from "$lib/client/components/buttons/SectorButton.svelte";
     let {data} = $props();
 
     let editCatalogModal = $state({show: false})
@@ -20,49 +21,68 @@
     const datasets = $derived(data.catalog.datasets)
 </script>
 
-<Page title={data.catalog.title} description={data.catalog.description}>
-    {#snippet prefix()}
-        <Button style="margin-bottom: 1rem" size="sm" onclick={()=> goto('/catalogs')}><Icon icon="arrow-left" margin="right"/>Catalogs</Button>
-    {/snippet}
-    <Section>
-        <Flexbox justify="flex-end" gap=".5rem">
-            <Button onclick={()=> editCatalogModal.show = true}><Icon icon="pencil-fill" margin="right"/>Edit</Button>
-            <Button variant={data.catalog.isActive ? 'success' : 'danger'}>{data.catalog.isActive ? 'Active' : 'Inactive'}</Button>
-        </Flexbox>
-    </Section>
-    <Section>
-        <Card>
-            <Input type="text" placeholder="Search datasets from {data.catalog.title}" --bg="transparent" --border="none"/>
+<div class="sidebar-layout">
+    <div style="width: 350px;">
+        <h3>Search</h3>
+        <Card style="margin-bottom: 1rem;">
+            <Input type="text" id="search" placeholder="Search..." --bg="transparent" --border="none" />
         </Card>
-    </Section>
-    <Section>
-        <SectionHeader title="Datasets"/>
-        <Row xs={1} md={2} xxl={3}>
-            {#await data.catalog.datasets}
-                <!-- promise is pending -->
-                {#each Array(8) as _, i}
-                    <Col>
-                        <DatasetCard skeleton fit/>
-                    </Col>
+        <div style="margin-bottom: 1rem;">
+            <h3>Sectors</h3>
+            <div style="display: flex; gap: .5rem; flex-wrap: wrap;">
+                {#each data.sectors as sector}
+                    <SectorButton {sector} size="xs" style="white-space: nowrap">{sector.name}</SectorButton>
                 {/each}
-            {:then value}
-                <!-- promise was fulfilled or not a Promise -->
-                {#each value as dataset (dataset.id)}
-                    <Col>
-                        <DatasetCard {dataset} fit/>
-                    </Col>
+            </div>
+        </div>
+        <div style="margin-bottom: 1rem;">
+            <h3>Catalogs</h3>
+            <div style="display: flex; gap: .5rem; flex-wrap: wrap;">
+                {#each data.catalogs as catalog}
+                    <Button size="sm" style="white-space: nowrap">{catalog["dct:title"]}</Button>
                 {/each}
-            {:catch error}
-                <!-- promise was rejected -->
-                <p>Something went wrong: {error.message}</p>
-            {/await}
-        </Row>
-    </Section>
-    <Section>
-        <pre><code>{JSON.stringify(datasets, null, 2)}</code></pre>
-    </Section>
+            </div>
+        </div>
+    </div>
+    <Page title={data.catalog.title} description={data.catalog.description}>
+        {#snippet prefix()}
+            <Button style="margin-bottom: 1rem" size="sm" onclick={()=> goto('/catalogs')}><Icon icon="arrow-left" margin="right"/>Catalogs</Button>
+        {/snippet}
+        <Section>
+            <Flexbox justify="flex-end" gap=".5rem">
+                <Button onclick={()=> editCatalogModal.show = true}><Icon icon="pencil-fill" margin="right"/>Edit</Button>
+                <Button variant={data.catalog.isActive ? 'success' : 'danger'}>{data.catalog.isActive ? 'Active' : 'Inactive'}</Button>
+            </Flexbox>
+        </Section>
+        <Section>
+            <SectionHeader title="Datasets"/>
+            <Row xs={1} md={2} xxl={3}>
+                {#await data.catalog.datasets}
+                    <!-- promise is pending -->
+                    {#each Array(8) as _, i}
+                        <Col>
+                            <DatasetCard skeleton fit/>
+                        </Col>
+                    {/each}
+                {:then value}
+                    <!-- promise was fulfilled or not a Promise -->
+                    {#each value as dataset (dataset.id)}
+                        <Col>
+                            <DatasetCard {dataset} fit/>
+                        </Col>
+                    {/each}
+                {:catch error}
+                    <!-- promise was rejected -->
+                    <p>Something went wrong: {error.message}</p>
+                {/await}
+            </Row>
+        </Section>
+<!--        <Section>-->
+<!--            <pre><code>{JSON.stringify(datasets, null, 2)}</code></pre>-->
+<!--        </Section>-->
 
-</Page>
+    </Page>
+</div>
 
 <Modal title="Edit Catalog" bind:show={editCatalogModal.show}>
     <Form action="?/updateCatalog" method="POST" onsuccess={()=> editCatalogModal.show = false}>
@@ -89,3 +109,21 @@
         </Flexbox>
     </Form>
 </Modal>
+
+<style lang="scss">
+  @use "$lib/client/styles/mixins/responsive" as responsive;
+
+  .sidebar-layout {
+    padding-top: calc(70px + 2rem);
+    display: flex;
+
+    @include responsive.min-width(md) {
+      padding-left: 2rem;
+    }
+
+    :global(.page) {
+      flex: 1;
+      padding-top: 0;
+    }
+  }
+</style>

@@ -11,7 +11,7 @@
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
             <NavbarItem href="/" exact>Home</NavbarItem>
             <NavbarItem href="/datasets" exact>Datasets</NavbarItem>
-            <NavbarItem href="/catalogs" exact>Catalogs</NavbarItem>
+            <NavbarItem href="/catalogs">Catalogs</NavbarItem>
         </div>
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
             <NavbarItem href="/login">
