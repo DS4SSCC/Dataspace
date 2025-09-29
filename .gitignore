@@ -29,3 +29,10 @@ vite.config.ts.timestamp-*
 /../generated/prisma
 
 /generated/prisma
+
+.npmrc
+old
+*.pem
+
+./prisma/dev.db
+

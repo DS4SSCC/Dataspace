@@ -1,13 +1,14 @@
 <script lang="ts">
-	import favicon from '$lib/assets/favicon.svg';
+    import favicon from '$lib/assets/favicon.svg';
     import Navbar from "$lib/client/components/navbar/Navbar.svelte";
     import NavbarItem from "$lib/client/components/navbar/NavbarItem.svelte";
+    import {session} from "$lib/client/stores/session.store.svelte";
 
-	let { children } = $props();
+    let {children} = $props();
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+    <link rel="icon" href={favicon}/>
 </svelte:head>
 
 <Navbar --bg="var(--color-background-primary)">
@@ -20,8 +21,8 @@
             <NavbarItem href="/dashboard/api" exact>API</NavbarItem>
         </div>
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
-            <NavbarItem href="/login">
-                Logged in as Steven Slaa
+            <NavbarItem href="/dashboard/account">
+                Logged in as {session.user.full_name}
             </NavbarItem>
         </div>
     </div>
