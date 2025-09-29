@@ -18,11 +18,13 @@
 
     let editCatalogModal = $state({show: false})
 
-    const datasets = $derived(data.catalog.datasets)
+    const datasets = $derived(data.catalog.datasets);
+
+    let sidebar = $state({show: true})
 </script>
 
-<div class="sidebar-layout">
-    <div style="width: 350px;">
+<div class="sidebar-layout" class:visible={sidebar.show}>
+    <div class="sidebar">
         <h3>Search</h3>
         <Card style="margin-bottom: 1rem;">
             <Input type="text" id="search" placeholder="Search..." --bg="transparent" --border="none" />
@@ -46,6 +48,7 @@
     </div>
     <Page title={data.catalog.title} description={data.catalog.description}>
         {#snippet prefix()}
+            <Button size="sm" variant="primary" onclick={()=> sidebar.show = !sidebar.show}>Filters</Button>
             <Button style="margin-bottom: 1rem" size="sm" onclick={()=> goto('/catalogs')}><Icon icon="arrow-left" margin="right"/>Catalogs</Button>
         {/snippet}
         <Section>
@@ -114,16 +117,31 @@
   @use "$lib/client/styles/mixins/responsive" as responsive;
 
   .sidebar-layout {
+    $sidebar-width: 350px;
+    position: relative;
     padding-top: calc(70px + 2rem);
-    display: flex;
 
     @include responsive.min-width(md) {
       padding-left: 2rem;
     }
 
+    .sidebar{
+      width: 350px;
+      position: fixed;
+      left: calc($sidebar-width * -1);
+      transition: .5s;
+    }
+
     :global(.page) {
       flex: 1;
       padding-top: 0;
+    }
+
+    &.visible{
+      --offset-left: 350px;
+      .sidebar {
+        left: 2rem;
+      }
     }
   }
 </style>

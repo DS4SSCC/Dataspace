@@ -30,9 +30,10 @@
 <style>
     .page{
         padding-top: calc(70px + 1.5rem);
-        padding-left: 2rem;
+        padding-left: calc(2rem + var(--offset-left));
         padding-right: 2rem;
         padding-bottom: 70px;
+        transition: .5s;
         header{
             display: flex;
             justify-content: space-between;
