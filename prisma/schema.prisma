@@ -34,3 +34,10 @@ model User {
   //relations
   sessions Session[]
 }
+
+model Policy {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  data        Bytes
+}

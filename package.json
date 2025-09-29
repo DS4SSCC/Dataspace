@@ -26,9 +26,11 @@
     "vite": "^7.0.4"
   },
   "dependencies": {
+    "@open-policy-agent/opa-wasm": "^1.10.0",
     "@prisma/client": "^6.16.2",
     "@sourceregistry/node-env": "^0.0.5",
     "@sourceregistry/node-jwt": "^0.0.1",
+    "@sourceregistry/svelte-service-manager": "^0.0.35",
     "bootstrap-icons": "^1.13.1",
     "echarts": "^6.0.0"
   }
