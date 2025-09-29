@@ -37,22 +37,15 @@
                 {/each}
             </div>
         </div>
-        <div style="margin-bottom: 1rem;">
-            <h3>Catalogs</h3>
-            <div style="display: flex; gap: .5rem; flex-wrap: wrap;">
-                {#each data.catalogs as catalog}
-                    <Button size="sm" style="white-space: nowrap">{catalog["dct:title"]}</Button>
-                {/each}
-            </div>
-        </div>
     </div>
     <Page title={data.catalog.title} description={data.catalog.description}>
         {#snippet prefix()}
-            <Button size="sm" variant="primary" onclick={()=> sidebar.show = !sidebar.show}>Filters</Button>
             <Button style="margin-bottom: 1rem" size="sm" onclick={()=> goto('/catalogs')}><Icon icon="arrow-left" margin="right"/>Catalogs</Button>
+            <Button size="sm" variant="primary" onclick={()=> sidebar.show = !sidebar.show}>Filters</Button>
         {/snippet}
         <Section>
             <Flexbox justify="flex-end" gap=".5rem">
+
                 <Button onclick={()=> editCatalogModal.show = true}><Icon icon="pencil-fill" margin="right"/>Edit</Button>
                 <Button variant={data.catalog.isActive ? 'success' : 'danger'}>{data.catalog.isActive ? 'Active' : 'Inactive'}</Button>
             </Flexbox>
