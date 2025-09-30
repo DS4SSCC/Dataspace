@@ -17,9 +17,9 @@
             requester: 'researcher@university.edu',
             reason: 'Academic research on pandemic trends',
             status: 'approved',
-            requested: '2023-10-15',
-            approved: '2023-10-16',
-            expires: '2024-10-16'
+            requested: '2025-9-15',
+            approved: '2025-9-16',
+            expires: '2025-9-16'
         },
         {
             id: 'req-2',
@@ -27,7 +27,7 @@
             requester: 'data@company.com',
             reason: 'For developing trading algorithms',
             status: 'pending',
-            requested: '2023-10-18',
+            requested: '2025-9-18',
             approved: null,
             expires: null
         },
@@ -37,7 +37,7 @@
             requester: 'climate@agency.gov',
             reason: 'Climate modeling research',
             status: 'rejected',
-            requested: '2023-10-10',
+            requested: '2025-9-10',
             approved: null,
             expires: null
         },
@@ -47,9 +47,9 @@
             requester: 'stats@org.net',
             reason: 'Demographic analysis project',
             status: 'approved',
-            requested: '2023-10-05',
-            approved: '2023-10-06',
-            expires: '2024-10-06'
+            requested: '2025-9-05',
+            approved: '2025-9-06',
+            expires: '2024-9-06'
         },
         {
             id: 'req-5',
@@ -57,16 +57,16 @@
             requester: 'analytics@firm.com',
             reason: 'Economic forecasting model',
             status: 'pending',
-            requested: '2023-10-20',
+            requested: '2025-9-20',
             approved: null,
             expires: null
         }
     ];
 
     // Filters
-    let searchTerm = '';
-    let filterStatus = 'all';
-    let sortBy = 'requested';
+    let searchTerm = $state('');
+    let filterStatus = $state('all');
+    let sortBy = $state('requested');
 
     // Filter and sort requests
     const filteredRequests = $derived(datasetRequests

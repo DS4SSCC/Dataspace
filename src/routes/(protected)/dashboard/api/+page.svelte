@@ -15,27 +15,27 @@
         {
             id: 'key-1',
             name: 'Production App',
-            key: 'sk_1234567890abcdef',
-            created: '2023-05-15',
-            lastUsed: '2023-10-20',
+            key: '1234567890abcdef',
+            created: '2025-05-15',
+            lastUsed: '2025-9-20',
             status: 'active',
             permissions: ['read', 'write']
         },
         {
             id: 'key-2',
             name: 'Development',
-            key: 'sk_0987654321fedcba',
-            created: '2023-07-22',
-            lastUsed: '2023-10-18',
+            key: '0987654321fedcba',
+            created: '2025-07-22',
+            lastUsed: '2025-9-18',
             status: 'active',
             permissions: ['read']
         },
         {
             id: 'key-3',
             name: 'Analytics Service',
-            key: 'sk_5555666677778888',
-            created: '2023-09-01',
-            lastUsed: '2023-10-05',
+            key: '5555666677778888',
+            created: '2025-09-01',
+            lastUsed: '2025-9-05',
             status: 'revoked',
             permissions: ['read']
         }
