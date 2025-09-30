@@ -54,7 +54,8 @@ model Catalog {
 
 model Policy {
   id          String  @id @default(cuid())
+  active      Boolean @default(false)
   name        String
   description String?
-  data        Bytes
+  raw         String
 }

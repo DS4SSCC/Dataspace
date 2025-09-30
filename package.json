@@ -18,7 +18,7 @@
     "@sveltejs/kit": "^2.22.0",
     "@sveltejs/vite-plugin-svelte": "^6.0.0",
     "@types/node": "^24.5.2",
-    "prisma": "^6.16.2",
+    "prisma": "^6.16.3",
     "sass": "^1.93.1",
     "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
@@ -26,8 +26,7 @@
     "vite": "^7.0.4"
   },
   "dependencies": {
-    "@open-policy-agent/opa-wasm": "^1.10.0",
-    "@prisma/client": "^6.16.2",
+    "@prisma/client": "^6.16.3",
     "@sourceregistry/node-env": "^0.0.5",
     "@sourceregistry/node-jwt": "^0.0.1",
     "@sourceregistry/svelte-service-manager": "^0.0.35",
