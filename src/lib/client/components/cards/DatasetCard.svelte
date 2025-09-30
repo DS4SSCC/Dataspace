@@ -121,7 +121,7 @@
             </Flexbox>
 
             <div>
-                <h3>{dataset.title}</h3>
+                <h4>{dataset.title}</h4>
                 <p style="color: var(--color-text-secondary); display: -webkit-box; -webkit-line-clamp: 2;line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis">
                     {sanitizeHtmlToPlainText(dataset.description)}
                 </p>

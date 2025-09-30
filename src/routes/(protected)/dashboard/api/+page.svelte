@@ -1,5 +1,4 @@
 <script>
-    import {onMount} from 'svelte';
     import Page from "$lib/client/components/Page.svelte";
     import Section from "$lib/client/components/Section.svelte";
     import Button from "$lib/client/components/Button.svelte";
@@ -9,6 +8,7 @@
     import Card from "$lib/client/components/Card.svelte";
     import Flexbox from "$lib/client/components/Flexbox.svelte";
     import Input from "$lib/client/components/form/Input.svelte";
+    import AnalyticsValueCard from "$lib/client/components/cards/AnalyticsValueCard.svelte";
 
     // API keys data
     let apiKeys = [
@@ -123,28 +123,16 @@
     <Section>
         <Row>
             <Col>
-                <Card>
-                    <h1>{usageStats.totalRequests.toLocaleString()}</h1>
-                    <span>Total Requests</span>
-                </Card>
+                <AnalyticsValueCard title="Total Requests" value={usageStats.totalRequests.toLocaleString()}/>
             </Col>
             <Col>
-                <Card>
-                    <h1>2,845</h1>
-                    <span>{usageStats.requestsToday}</span>
-                </Card>
+                <AnalyticsValueCard title="Requests Today" value={usageStats.requestsToday.toString()}/>
             </Col>
             <Col>
-                <Card>
-                    <h1>{usageStats.avgResponseTime}ms</h1>
-                    <span>Avg. Response Time</span>
-                </Card>
+                <AnalyticsValueCard title="Avg. Response Time" value="{usageStats.avgResponseTime}ms"/>
             </Col>
             <Col>
-                <Card>
-                    <h1>{usageStats.successRate}%</h1>
-                    <span>Success Rate</span>
-                </Card>
+                <AnalyticsValueCard title="Success Rate" value="{usageStats.successRate}%"/>
             </Col>
         </Row>
     </Section>
@@ -178,13 +166,9 @@
                         <tr>
                             <td>{key.name}</td>
                             <td class="key-cell">
-                                <code class="key-display">{key.key}</code>
-                                <Button
-                                        class="copy-btn"
-                                        onclick={() => copyKey(key.key)}
-                                        title="Copy to clipboard"
-                                >
-                                    {copiedKey === key.key ? 'Copied!' : 'Copy'}
+                                <Input type="text" value={key.key} --mb="0"></Input>
+                                <Button onclick={() => copyKey(key.key)}>
+                                    <Icon icon={copiedKey === key.key ? 'clipboard-check' : 'clipboard'}/>
                                 </Button>
                             </td>
                             <td>{key.created}</td>
@@ -195,12 +179,10 @@
             </span>
                             </td>
                             <td>
-                                <button
-                                        class={`status-btn ${key.status === 'active' ? 'revoke' : 'activate'}`}
-                                        on:click={() => toggleStatus(key.id)}
-                                >
+                                <Button --text={key.status === 'active' ? 'var(--color-danger)' : 'var(--color-success)'} size="sm"
+                                        onclick={() => toggleStatus(key.id)}>
                                     {key.status === 'active' ? 'Revoke' : 'Activate'}
-                                </button>
+                                </Button>
                             </td>
                         </tr>
                     {/each}
@@ -246,73 +228,10 @@
         gap: 10px;
     }
 
-    .key-display {
-        font-family: monospace;
-        background: var(--color-background-tertiary);
-        border: solid 1px var(--color-border-primary);
-        padding: 5px 10px;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .status {
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 500;
-    }
-
-    .status.active {
-        background: rgba(118, 210, 117, 0.2);
-        color: #76d275;
-    }
-
-    .status.revoked {
-        background: rgba(255, 100, 100, 0.2);
-        color: #ff6464;
-    }
-
-    .status-btn {
-        padding: 6px 12px;
-        border-radius: 4px;
-        border: none;
-        cursor: pointer;
-        font-weight: 500;
-        transition: background 0.3s;
-    }
-
-    .status-btn.revoke {
-        background: rgba(255, 100, 100, 0.2);
-        color: #ff6464;
-    }
-
-    .status-btn.revoke:hover {
-        background: rgba(255, 100, 100, 0.4);
-    }
-
-    .status-btn.activate {
-        background: rgba(118, 210, 117, 0.2);
-        color: #76d275;
-    }
-
-    .status-btn.activate:hover {
-        background: rgba(118, 210, 117, 0.4);
-    }
-
     .no-results {
         text-align: center;
         padding: 40px 20px;
         color: #aaa;
-    }
-
-    .info-section {
-        background: rgba(30, 40, 50, 0.7);
-        border-radius: 10px;
-        padding: 25px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     .info-section h2 {
@@ -335,14 +254,6 @@
             flex-direction: column;
             align-items: flex-start;
             gap: 15px;
-        }
-
-        .controls {
-            flex-direction: column;
-        }
-
-        .key-display {
-            max-width: 100px;
         }
     }
 </style>

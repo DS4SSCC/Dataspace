@@ -13,7 +13,7 @@
 
 <Card fit style="display: flex; flex-direction: column; justify-content: space-between;{onclick ? 'cursor: pointer;': null}" {onclick}>
     <div>
-        <h3>{catalog.title}</h3>
+        <h4>{catalog.title}</h4>
         <p style="color: var(--color-text-secondary); margin-bottom: 1rem">{catalog.description}</p>
     </div>
     <Flexbox gap="1rem">

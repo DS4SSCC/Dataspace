@@ -4,7 +4,7 @@
 
     let { children, title, description, prefix, suffix }:{
         title?: string,
-        description?: string,
+        description?: string | number,
         prefix?: Snippet
         suffix?: Snippet
         children?: Snippet

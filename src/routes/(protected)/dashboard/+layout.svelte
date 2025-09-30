@@ -14,14 +14,14 @@
 <Navbar --bg="var(--color-background-primary)" --color="var(--color-text-primary)" --color-inactive="silver" --color-active="var(--color-primary)">
     <div style="display: flex; align-items: center; justify-content: space-between; height: 100%; align-items: stretch;">
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
-            <NavbarItem href="/dashboard/analytics" exact>Analytics</NavbarItem>
-            <NavbarItem href="/dashboard/account" exact>Account</NavbarItem>
-            <NavbarItem href="/dashboard/datasets" exact>Datasets</NavbarItem>
-            <NavbarItem href="/dashboard/requests" exact>Requests</NavbarItem>
-            <NavbarItem href="/dashboard/api" exact>API</NavbarItem>
+            <NavbarItem href="/dashboard/analytics">Analytics</NavbarItem>
+            <NavbarItem href="/dashboard/account">Account</NavbarItem>
+            <NavbarItem href="/dashboard/datasets">Datasets</NavbarItem>
+            <NavbarItem href="/dashboard/requests">Requests</NavbarItem>
+            <NavbarItem href="/dashboard/api">API</NavbarItem>
         </div>
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
-            <NavbarItem href="/dashboard/account">
+            <NavbarItem href="/dashboard/account" --color-inactive="var(--color-text-primary)">
                 Logged in as {session.user.full_name}
             </NavbarItem>
         </div>

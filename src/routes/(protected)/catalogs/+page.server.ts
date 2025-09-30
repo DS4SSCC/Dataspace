@@ -17,7 +17,7 @@ export const actions: Actions = {
 
         const title = form.string$('catalog.title');
         const nameFromTitle = titleToName(title);
-        const description = form.string$('catalog.description', true);
+        const description = form.string$('catalog.description');
         const apiStandard = form.string$('catalog.apiStandard');
         const apiUrl = form.string$('catalog.apiUrl');
         const apiKey = form.string$('catalog.apiKey', true);

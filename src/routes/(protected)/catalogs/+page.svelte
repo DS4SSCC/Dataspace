@@ -5,7 +5,6 @@
     import Button from "$lib/client/components/Button.svelte";
     import {setContext} from "svelte";
     import Input from "$lib/client/components/form/Input.svelte";
-    import Card from "$lib/client/components/Card.svelte";
     import Icon from "$lib/client/components/icons/Icon.svelte";
     import CatalogCard from "$lib/client/components/cards/CatalogCard.svelte";
     import Modal from "$lib/client/components/Modal.svelte";
@@ -36,13 +35,10 @@
             {/each}
         </Row>
     </Section>
-
-
-    <!--        <pre><code>{JSON.stringify(data.catalogs, null, 2)}</code></pre>-->
 </Page>
 
 <Modal title="Add Catalog" bind:show={addCatalogModal.show}>
-    <Form action="?/addCatalog" method="POST">
+    <Form action="?/addCatalog" method="POST" onsuccess={()=> addCatalogModal.show = false}>
         <Input required type="text" label="Name" name="catalog.title" placeholder="Enter a name..."/>
         <Input required type="textarea" label="Description" name="catalog.description" placeholder="Describe the catalog..."/>
         <Input required type="select" label="API Standard" name="catalog.apiStandard" options={[
