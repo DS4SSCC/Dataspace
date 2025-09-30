@@ -6,7 +6,8 @@
     import Section from "$lib/client/components/Section.svelte";
     import Row from "$lib/client/components/grid/Row.svelte";
     import Col from "$lib/client/components/grid/Col.svelte";
-    import Card from "$lib/client/components/Card.svelte";
+    import AnalyticsValueCard from "$lib/client/components/cards/AnalyticsValueCard.svelte";
+    import AnalyticsChartCard from "$lib/client/components/cards/AnalyticsChartCard.svelte";
 
     let accessChartRef;
     let categoryChartRef;
@@ -35,22 +36,13 @@
         // Access Chart (Line)
         const accessChart = echarts.init(accessChartRef);
         accessChart.setOption({
-            title: {
-                text: 'Access Requests',
-                textStyle: { color: '#e0e0e0' }
-            },
             tooltip: { trigger: 'axis' },
             xAxis: {
                 type: 'category',
                 data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                axisLine: { lineStyle: { color: '#555' } },
-                axisLabel: { color: '#aaa' }
             },
             yAxis: {
                 type: 'value',
-                axisLine: { lineStyle: { color: '#555' } },
-                axisLabel: { color: '#aaa' },
-                splitLine: { lineStyle: { color: 'rgba(255, 255, 255, 0.1)' } }
             },
             series: [{
                 data: accessData,
@@ -59,39 +51,29 @@
                 areaStyle: {
                     opacity: 0.3,
                     color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                        { offset: 0, color: 'rgba(77, 166, 255, 0.5)' },
-                        { offset: 1, color: 'rgba(77, 166, 255, 0.1)' }
+                        { offset: 0, color: 'rgba(139, 195, 74, 0.5)' },
+                        { offset: 1, color: 'rgba(139, 195, 74, 0.1)' }
                     ])
                 },
-                lineStyle: { color: '#4da6ff', width: 3 },
-                itemStyle: { color: '#4da6ff' }
+                lineStyle: { color: '#8BC34A', width: 3 },
+                itemStyle: { color: '#8BC34A' }
             }]
         });
 
         // Category Chart (Pie)
         const categoryChart = echarts.init(categoryChartRef);
         categoryChart.setOption({
-            title: {
-                text: 'Dataset Categories',
-                textStyle: { color: '#e0e0e0' }
-            },
             tooltip: { trigger: 'item' },
             legend: {
                 orient: 'vertical',
                 left: 'left',
                 top: 'middle',
-                textStyle: { color: '#e0e0e0' }
             },
             series: [{
                 name: 'Categories',
                 type: 'pie',
                 radius: ['40%', '70%'],
                 avoidLabelOverlap: false,
-                itemStyle: {
-                    borderRadius: 10,
-                    borderColor: '#1e2832',
-                    borderWidth: 2
-                },
                 label: { show: true, formatter: '{b}: {d}%' },
                 emphasis: {
                     label: {
@@ -107,42 +89,21 @@
         // Top Datasets Chart (Bar)
         const topDatasetsChart = echarts.init(topDatasetsChartRef);
         topDatasetsChart.setOption({
-            title: {
-                text: 'Top 5 Requested Datasets',
-                textStyle: { color: '#e0e0e0' }
-            },
             tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
             grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
             xAxis: {
                 type: 'value',
-                axisLine: { lineStyle: { color: '#555' } },
-                axisLabel: { color: '#aaa' },
-                splitLine: { lineStyle: { color: 'rgba(255, 255, 255, 0.1)' } }
             },
             yAxis: {
                 type: 'category',
-                data: topDatasets,
-                axisLine: { lineStyle: { color: '#555' } },
-                axisLabel: { color: '#aaa' }
             },
             series: [{
                 name: 'Requests',
                 type: 'bar',
-                label: { show: true, position: 'right', color: '#e0e0e0' },
-                emphasis: {
-                    itemStyle: {
-                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                            { offset: 0, color: '#76d275' },
-                            { offset: 1, color: '#4da6ff' }
-                        ])
-                    }
-                },
+                label: { show: true, position: 'right' },
                 data: topDatasetValues,
                 itemStyle: {
-                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                        { offset: 0, color: '#4da6ff' },
-                        { offset: 1, color: '#76d275' }
-                    ])
+                    color: '#8BC34A'
                 }
             }]
         });
@@ -150,44 +111,35 @@
         // Volume Chart (Area)
         const volumeChart = echarts.init(volumeChartRef);
         volumeChart.setOption({
-            title: {
-                text: 'Data Transfer Volume (GB)',
-                textStyle: { color: '#e0e0e0' }
-            },
             tooltip: { trigger: 'axis' },
             legend: {
                 data: ['Downloaded', 'Uploaded'],
-                textStyle: { color: '#e0e0e0' }
+                top: 20,
             },
             grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
             xAxis: [{
                 type: 'category',
                 boundaryGap: false,
                 data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                axisLine: { lineStyle: { color: '#555' } },
-                axisLabel: { color: '#aaa' }
             }],
             yAxis: [{
                 type: 'value',
-                axisLine: { lineStyle: { color: '#555' } },
-                axisLabel: { color: '#aaa' },
-                splitLine: { lineStyle: { color: 'rgba(255, 255, 255, 0.1)' } }
             }],
             series: [
                 {
                     name: 'Downloaded',
                     type: 'line',
                     stack: 'Volume',
-                    areaStyle: { opacity: 0.5, color: '#4da6ff' },
-                    lineStyle: { color: '#4da6ff', width: 2 },
+                    areaStyle: { opacity: 0.5, color: '#3CC0CF' },
+                    lineStyle: { color: '#3CC0CF', width: 2 },
                     data: downloadData
                 },
                 {
                     name: 'Uploaded',
                     type: 'line',
                     stack: 'Volume',
-                    areaStyle: { opacity: 0.5, color: '#76d275' },
-                    lineStyle: { color: '#76d275', width: 2 },
+                    areaStyle: { opacity: 0.5, color: '#8BC34A' },
+                    lineStyle: { color: '#8BC34A', width: 2 },
                     data: uploadData
                 }
             ]
@@ -226,121 +178,33 @@
     <Section>
         <Row>
             <Col>
-                <Card>
-                    <h1>142</h1>
-                    <span>Datasets</span>
-                </Card>
+                <AnalyticsValueCard title="Datasets" value="142"/>
             </Col>
             <Col>
-                <Card>
-                    <h1>2,845</h1>
-                    <span>Access Requests</span>
-                </Card>
+                <AnalyticsValueCard title="Access Requests" value="2,845"/>
             </Col>
             <Col>
-                <Card>
-                    <h1>1,230</h1>
-                    <span>Data Transfers</span>
-                </Card>
+                <AnalyticsValueCard title="Data Transfers" value="1,230"/>
             </Col>
             <Col>
-                <Card>
-                    <h1>24.7%</h1>
-                    <span>Growth Rate</span>
-                </Card>
+                <AnalyticsValueCard title="Growth Rate" value="24.7%"/>
             </Col>
         </Row>
     </Section>
     <Section>
         <Row xs={1} md={2}>
             <Col>
-                <Card>
-                    <div class="chart-header">
-                        <div class="chart-title">Dataset Access Over Time</div>
-                        <div class="chart-actions">
-                            <button><i class="fas fa-download"></i></button>
-                            <button><i class="fas fa-expand"></i></button>
-                        </div>
-                    </div>
-                    <div bind:this={accessChartRef} class="chart"></div>
-                </Card>
+                <AnalyticsChartCard title="Dataset Access Over Time" bind:chart={accessChartRef}/>
             </Col>
             <Col>
-                <Card>
-                    <div class="chart-header">
-                        <div class="chart-title">Dataset Usage by Category</div>
-                        <div class="chart-actions">
-                            <button><i class="fas fa-download"></i></button>
-                            <button><i class="fas fa-expand"></i></button>
-                        </div>
-                    </div>
-                    <div bind:this={categoryChartRef} class="chart"></div>
-                </Card>
+                <AnalyticsChartCard title="Dataset Usage by Category" bind:chart={categoryChartRef}/>
             </Col>
             <Col>
-                <Card>
-                    <div class="chart-header">
-                        <div class="chart-title">Top Requested Datasets</div>
-                        <div class="chart-actions">
-                            <button><i class="fas fa-download"></i></button>
-                            <button><i class="fas fa-expand"></i></button>
-                        </div>
-                    </div>
-                    <div bind:this={topDatasetsChartRef} class="chart"></div>
-                </Card>
+                <AnalyticsChartCard title="Top Requested Datasets" bind:chart={topDatasetsChartRef}/>
             </Col>
             <Col>
-                <Card>
-                    <div class="chart-header">
-                        <div class="chart-title">Data Transfer Volume</div>
-                        <div class="chart-actions">
-                            <button><i class="fas fa-download"></i></button>
-                            <button><i class="fas fa-expand"></i></button>
-                        </div>
-                    </div>
-                    <div bind:this={volumeChartRef} class="chart"></div>
-                </Card>
+                <AnalyticsChartCard title="Data Transfer Volume (GB)" bind:chart={volumeChartRef}/>
             </Col>
         </Row>
     </Section>
-
 </Page>
-
-<style>
-
-    .chart-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .chart-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-    }
-
-    .chart-actions {
-        display: flex;
-        gap: 10px;
-    }
-
-    .chart-actions button {
-        background: rgba(70, 100, 150, 0.3);
-        border: none;
-        color: #e0e0e0;
-        padding: 5px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .chart-actions button:hover {
-        background: rgba(70, 100, 150, 0.6);
-    }
-
-    .chart {
-        height: 350px;
-        width: 100%;
-    }
-</style>

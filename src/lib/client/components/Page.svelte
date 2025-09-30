@@ -2,9 +2,10 @@
     import type {Snippet} from "svelte";
     import Section from "$lib/client/components/Section.svelte";
 
-    let { children, title, description, suffix }:{
+    let { children, title, description, prefix, suffix }:{
         title?: string,
-        description?: string,
+        description?: string | number,
+        prefix?: Snippet
         suffix?: Snippet
         children?: Snippet
     } = $props();
@@ -15,6 +16,7 @@
         <Section>
             <header>
                 <div>
+                    {@render prefix?.()}
                     <h1>{title}</h1>
                     {#if description}<p>{description}</p>{/if}
                 </div>
@@ -28,9 +30,10 @@
 <style>
     .page{
         padding-top: calc(70px + 1.5rem);
-        padding-left: 2rem;
+        padding-left: calc(2rem + var(--offset-left));
         padding-right: 2rem;
         padding-bottom: 70px;
+        transition: .5s;
         header{
             display: flex;
             justify-content: space-between;

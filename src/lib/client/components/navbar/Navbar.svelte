@@ -7,9 +7,9 @@
     } = $props();
 </script>
 <div class="navbar" {...rest}>
-    <div class="navbar-brand">
-        <BrandIcon --width="45px" --color="var(--color-text-primary)" />
-    </div>
+    <a class="navbar-brand" href="/">
+        <BrandIcon --width="45px" />
+    </a>
     <div class="navbar-content">
         {@render children?.()}
     </div>

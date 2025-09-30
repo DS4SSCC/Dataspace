@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import Page from "$lib/client/components/Page.svelte";
     import Row from "$lib/client/components/grid/Row.svelte";
     import Col from "$lib/client/components/grid/Col.svelte";
@@ -8,13 +8,19 @@
     import SectorButton from "$lib/client/components/buttons/SectorButton.svelte";
     import Input from "$lib/client/components/form/Input.svelte";
     import Card from "$lib/client/components/Card.svelte";
+    import SidebarLayout from "$lib/client/components/SidebarLayout.svelte";
+    import Section from "$lib/client/components/Section.svelte";
+    import Icon from "$lib/client/components/icons/Icon.svelte";
 
     const {data} = $props();
+
+    let sidebarState = $state<{show: boolean}>({show: true})
+
     setContext("sectors", data.sectors);
 </script>
 
-<div class="sidebar-layout">
-    <div style="width: 350px;">
+<SidebarLayout bind:show={sidebarState.show}>
+    {#snippet sidebar()}
         <h3>Search</h3>
         <Card style="margin-bottom: 1rem;">
             <Input type="text" id="search" placeholder="Search..." --bg="transparent" --border="none" />
@@ -35,34 +41,20 @@
                 {/each}
             </div>
         </div>
-    </div>
-    <Page title="Datasets">
-        <Row xs={1} md={2} xxl={3}>
-            {#each data.datasets as dataset}
-                <Col>
-                    <DatasetCard {dataset} fit/>
-                </Col>
-            {/each}
-        </Row>
+    {/snippet}
+    <Page title="Datasets" description="Explore datasets from a large selection of connected data portals from various sectors">
+        <Section>
+            <Button variant={sidebarState.show ? "primary" : "default"} onclick={()=> sidebarState.show = !sidebarState.show}><Icon icon="funnel-fill" margin="right"/>Filters</Button>
+        </Section>
+        <Section>
+            <Row xs={1} md={2} xxl={3}>
+                {#each data.datasets as dataset}
+                    <Col>
+                        <DatasetCard {dataset} fit/>
+                    </Col>
+                {/each}
+            </Row>
+        </Section>
     </Page>
-</div>
-
-<style lang="scss">
-  @use "$lib/client/styles/mixins/responsive" as responsive;
-
-  .sidebar-layout {
-    padding-top: calc(70px + 2rem);
-    display: flex;
-
-    @include responsive.min-width(md) {
-      padding-left: 2rem;
-    }
-
-    :global(.page) {
-      flex: 1;
-      padding-top: 0;
-    }
-  }
-</style>
-
+</SidebarLayout>
 

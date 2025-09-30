@@ -1,5 +1,4 @@
 <script>
-    import {onMount} from 'svelte';
     import Page from "$lib/client/components/Page.svelte";
     import Section from "$lib/client/components/Section.svelte";
     import Button from "$lib/client/components/Button.svelte";
@@ -9,6 +8,7 @@
     import Card from "$lib/client/components/Card.svelte";
     import Flexbox from "$lib/client/components/Flexbox.svelte";
     import Input from "$lib/client/components/form/Input.svelte";
+    import {goto} from "$app/navigation";
 
     // Dataset data
     let datasets = [
@@ -167,16 +167,16 @@
                     <tbody>
                     {#each filteredDatasets as dataset}
                         <tr>
-                            <td>
+                            <td onclick={()=> goto('/dashboard/datasets/dummy')} style="cursor: pointer">
                                 <div class="dataset-info">
-                                    <div class="dataset-icon">
+                                    <Button size="lg" --color="var(--color-primary)">
                                         <Icon icon="file-earmark-spreadsheet" />
-                                    </div>
+                                    </Button>
                                     <div>
                                         <div class="dataset-name">{dataset.name}</div>
                                         <div class="dataset-tags">
                                             {#each dataset.tags as tag}
-                                                <span class="tag">{tag}</span>
+                                                <Button size="xs">{tag}</Button>
                                             {/each}
                                         </div>
                                     </div>
@@ -197,21 +197,13 @@
                             <td>{dataset.lastUpdated}</td>
                             <td>
                                 <Flexbox gap="0.5rem">
-                                    <Button variant="secondary" size="sm">
+                                    <Button size="sm">
                                         <Icon icon="pencil" />
                                     </Button>
-                                    <Button
-                                            variant="secondary"
-                                            size="sm"
-                                            on:click={() => toggleAccess(dataset.id)}
-                                    >
+                                    <Button size="sm" onclick={() => toggleAccess(dataset.id)}>
                                         <Icon icon="lock" />
                                     </Button>
-                                    <Button
-                                            variant="danger"
-                                            size="sm"
-                                            on:click={() => deleteDataset(dataset.id)}
-                                    >
+                                    <Button size="sm" --color="var(--color-danger)" onclick={() => deleteDataset(dataset.id)}>
                                         <Icon icon="trash" />
                                     </Button>
                                 </Flexbox>
@@ -233,8 +225,8 @@
 
     <Section>
         <Row>
-            <Col width="4">
-                <Card>
+            <Col>
+                <Card fit>
                     <h3>Dataset Statistics</h3>
                     <div class="stat-card">
                         <div class="stat-value">{datasets.length}</div>
@@ -250,8 +242,8 @@
                     </div>
                 </Card>
             </Col>
-            <Col width="8">
-                <Card>
+            <Col>
+                <Card fit>
                     <h3>Access Distribution</h3>
                     <div class="chart-container">
                         <div class="chart-bar">
@@ -326,17 +318,6 @@
         gap: 1rem;
     }
 
-    .dataset-icon {
-        background: var(--color-background-tertiary);
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--color-primary);
-    }
-
     .dataset-name {
         font-weight: 500;
         margin-bottom: 0.25rem;
@@ -348,40 +329,10 @@
         flex-wrap: wrap;
     }
 
-    .tag {
-        background: var(--color-background-tertiary);
-        padding: 0.25rem 0.5rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        color: var(--color-text-secondary);
-    }
-
     .downloads-cell {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-    }
-
-    .access {
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 500;
-    }
-
-    .access.public {
-        background: rgba(118, 210, 117, 0.2);
-        color: #76d275;
-    }
-
-    .access.protected {
-        background: rgba(77, 166, 255, 0.2);
-        color: #4da6ff;
-    }
-
-    .access.private {
-        background: rgba(255, 100, 100, 0.2);
-        color: #ff6464;
     }
 
     .no-results {

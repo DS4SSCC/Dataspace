@@ -106,7 +106,7 @@
     <Section>
         <Row>
             <Col>
-                <Card>
+                <Card fit>
                     <Flexbox align="center" gap="1.5rem">
                         <Gravatar email={session.user.email} alt="Profile" class="avatar"/>
 <!--                        <img src={gravatarAvatar} alt="Profile" class="avatar"/>-->
@@ -123,8 +123,8 @@
 
     <Section>
         <Row>
-            <Col width={6}>
-                <Card>
+            <Col>
+                <Card fit>
                     <h3>Profile Information</h3>
                     <div class="form-group">
                         <label for="name">Full Name</label>

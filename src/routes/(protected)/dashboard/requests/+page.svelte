@@ -1,5 +1,4 @@
 <script>
-    import {onMount} from 'svelte';
     import Page from "$lib/client/components/Page.svelte";
     import Section from "$lib/client/components/Section.svelte";
     import Button from "$lib/client/components/Button.svelte";
@@ -18,9 +17,9 @@
             requester: 'researcher@university.edu',
             reason: 'Academic research on pandemic trends',
             status: 'approved',
-            requested: '2023-10-15',
-            approved: '2023-10-16',
-            expires: '2024-10-16'
+            requested: '2025-9-15',
+            approved: '2025-9-16',
+            expires: '2025-9-16'
         },
         {
             id: 'req-2',
@@ -28,7 +27,7 @@
             requester: 'data@company.com',
             reason: 'For developing trading algorithms',
             status: 'pending',
-            requested: '2023-10-18',
+            requested: '2025-9-18',
             approved: null,
             expires: null
         },
@@ -38,7 +37,7 @@
             requester: 'climate@agency.gov',
             reason: 'Climate modeling research',
             status: 'rejected',
-            requested: '2023-10-10',
+            requested: '2025-9-10',
             approved: null,
             expires: null
         },
@@ -48,9 +47,9 @@
             requester: 'stats@org.net',
             reason: 'Demographic analysis project',
             status: 'approved',
-            requested: '2023-10-05',
-            approved: '2023-10-06',
-            expires: '2024-10-06'
+            requested: '2025-9-05',
+            approved: '2025-9-06',
+            expires: '2024-9-06'
         },
         {
             id: 'req-5',
@@ -58,19 +57,19 @@
             requester: 'analytics@firm.com',
             reason: 'Economic forecasting model',
             status: 'pending',
-            requested: '2023-10-20',
+            requested: '2025-9-20',
             approved: null,
             expires: null
         }
     ];
 
     // Filters
-    let searchTerm = '';
-    let filterStatus = 'all';
-    let sortBy = 'requested';
+    let searchTerm = $state('');
+    let filterStatus = $state('all');
+    let sortBy = $state('requested');
 
     // Filter and sort requests
-    $: filteredRequests = datasetRequests
+    const filteredRequests = $derived(datasetRequests
         .filter(request => {
             const matchesSearch = request.dataset.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 request.requester.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -83,7 +82,7 @@
             if (sortBy === 'status') return a.status.localeCompare(b.status);
             if (sortBy === 'dataset') return a.dataset.localeCompare(b.dataset);
             return 0;
-        });
+        }))
 
     // Update request status
     function updateStatus(id, newStatus) {
@@ -171,9 +170,9 @@
                         <tr>
                             <td>
                                 <div class="dataset-cell">
-                                    <div class="dataset-icon">
-                                        <Icon icon="file-earmark" />
-                                    </div>
+                                    <Button size="lg" --color="var(--color-primary)">
+                                        <Icon icon="file-earmark-spreadsheet" />
+                                    </Button>
                                     <div>
                                         <div class="dataset-name">{request.dataset}</div>
                                     </div>
@@ -197,36 +196,24 @@
                             <td>
                                 <Flexbox gap="0.5rem">
                                     {#if request.status === 'pending'}
-                                        <Button
-                                                variant="success"
-                                                size="sm"
-                                                on:click={() => updateStatus(request.id, 'approved')}
-                                        >
+                                        <Button --text="var(--color-success)" size="sm"
+                                                onclick={() => updateStatus(request.id, 'approved')}>
                                             Approve
                                         </Button>
-                                        <Button
-                                                variant="danger"
-                                                size="sm"
-                                                on:click={() => updateStatus(request.id, 'rejected')}
-                                        >
+                                        <Button --text="var(--color-danger)" size="sm"
+                                                onclick={() => updateStatus(request.id, 'rejected')}>
                                             Reject
                                         </Button>
                                     {/if}
                                     {#if request.status === 'approved'}
-                                        <Button
-                                                variant="secondary"
-                                                size="sm"
-                                                on:click={() => updateStatus(request.id, 'rejected')}
-                                        >
+                                        <Button --text="var(--color-info)" size="sm"
+                                                onclick={() => updateStatus(request.id, 'rejected')}>
                                             Revoke
                                         </Button>
                                     {/if}
-                                    <Button
-                                            variant="danger"
-                                            size="sm"
-                                            on:click={() => deleteRequest(request.id)}
-                                    >
-                                        <Icon icon="trash" />
+                                    <Button --text="var(--color-danger)" size="sm"
+                                            onclick={() => deleteRequest(request.id)}>
+                                        <Icon icon="trash-fill" />
                                     </Button>
                                 </Flexbox>
                             </td>
@@ -344,17 +331,6 @@
         gap: 0.75rem;
     }
 
-    .dataset-icon {
-        background: var(--color-background-tertiary);
-        width: 36px;
-        height: 36px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--color-primary);
-    }
-
     .dataset-name {
         font-weight: 500;
     }
@@ -382,28 +358,6 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-    }
-
-    .status {
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 500;
-    }
-
-    .status.pending {
-        background: rgba(255, 193, 7, 0.2);
-        color: #ffc107;
-    }
-
-    .status.approved {
-        background: rgba(118, 210, 117, 0.2);
-        color: #76d275;
-    }
-
-    .status.rejected {
-        background: rgba(255, 100, 100, 0.2);
-        color: #ff6464;
     }
 
     .no-results {

@@ -6,15 +6,15 @@
     let { children } = $props();
 </script>
 
-<Navbar --bg="var(--color-background-primary)">
+<Navbar --bg="var(--color-background-primary)" --color="var(--color-text-primary)" --color-inactive="silver" --color-active="var(--color-primary)">
     <div style="display: flex; align-items: center; justify-content: space-between; height: 100%; align-items: stretch;">
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
             <NavbarItem href="/" exact>Home</NavbarItem>
             <NavbarItem href="/datasets" exact>Datasets</NavbarItem>
-            <NavbarItem href="/catalogs" exact>Catalogs</NavbarItem>
+            <NavbarItem href="/catalogs">Catalogs</NavbarItem>
         </div>
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
-            <NavbarItem href="/login">
+            <NavbarItem href="/login" --color-inactive="var(--color-text-primary)">
                 Logged in as Steven Slaa
             </NavbarItem>
         </div>
