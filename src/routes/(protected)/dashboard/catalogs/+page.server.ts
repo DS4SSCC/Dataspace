@@ -62,7 +62,7 @@ export const actions: Actions = {
         });
 
         // Redirect na succesvolle creatie
-        redirect(303, '/catalogs');
+        redirect(303, `/dashboard/catalogs/${newCatalog.id}`);
 
     }, form.guard)
 };

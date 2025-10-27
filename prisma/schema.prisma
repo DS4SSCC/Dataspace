@@ -48,6 +48,54 @@ model Catalog {
   lastSync    DateTime? // Datum van de laatste synchronisatie
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  Dataset     Dataset[]
 
   @@map("catalogs")
+}
+
+model Dataset {
+  id String @id @default(cuid())
+
+  // 🔗 Relatie met de oorspronkelijke catalogus
+  catalog   Catalog @relation(fields: [catalogId], references: [id], onDelete: Cascade)
+  catalogId String
+
+  // 📦 DCAT-AP 2.0 - Core Metadata (zo compleet mogelijk)
+  title         String // dct:title
+  description   String // dct:description
+  identifier    String // dct:identifier — uniek binnen de catalogus of globaal
+  issued        DateTime? // dct:issued
+  modified      DateTime? // dct:modified
+  language      String? // dct:language (bijv. "nl", "en")
+  theme         String? // dcat:theme — URI of label (bijv. "http://publications.europa.eu/resource/authority/data-theme/ENER")
+  spatial       String? // dct:spatial — WKT of URI (bijv. "Eindhoven")
+  temporalStart DateTime? // dcterms:temporal — start
+  temporalEnd   DateTime? // dcterms:temporal — end
+
+  // 📄 Licentie & toegang (DCAT-AP velden)
+  license      String? // dct:license — URI (bijv. "http://creativecommons.org/licenses/by/4.0/")
+  accessRights String? // dcat:accessRights — URI (bijv. "http://publications.europa.eu/resource/authority/access-right/PUBLIC")
+
+  // 🔗 Distributie (minimaal 1)
+  accessUrl   String? // dcat:accessURL — API-endpoint waar data te vinden is
+  downloadUrl String? // dcat:downloadURL — directe download (optioneel)
+  mediaType   String? // dcat:mediaType — bijv. "application/json"
+
+  // ⚙️ Beheer binnen jouw dataspace (niet onderdeel van DCAT-AP)
+  isPublished  Boolean       @default(false) // Of deze dataset wordt opgenomen in jouw DCAT-AP feed
+  policyIntent PolicyIntent? @default(PUBLIC) // Simulatie van toegangsbeleid (zie enum hieronder)
+  notes        String? // Interne notities (bijv. "Gebruikt in Inzicht Verlicht")
+
+  // 🕒 Tijdsaanduidingen
+  importedAt  DateTime  @default(now()) // Wanneer metadata geïmporteerd is
+  publishedAt DateTime? // Wanneer voor het eerst gepubliceerd in jouw feed
+
+  @@unique([catalogId, identifier]) // Zorg dat dezelfde dataset niet dubbel wordt geïmporteerd
+  @@map("datasets")
+}
+
+enum PolicyIntent {
+  PUBLIC // Openbaar toegankelijk (geen OPA-check nodig)
+  RESTRICTED // Alleen voor bepaalde partijen (OPA regelt toegang via APISIX)
+  INTERNAL // Alleen Fontys (niet publiceren via DCAT-AP)
 }

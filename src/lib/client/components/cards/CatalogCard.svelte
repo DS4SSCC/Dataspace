@@ -13,12 +13,14 @@
 
 <Card fit style="display: flex; flex-direction: column; justify-content: space-between;{onclick ? 'cursor: pointer;': null}" {onclick}>
     <div>
-        <h4>{catalog.title}</h4>
+        <Flexbox justify="space-between" align="flex-start">
+            <h4>{catalog.title}</h4>
+            <Button size="xs" variant={catalog.isActive ? 'success' : 'danger'}>{catalog.isActive ? 'Active' : 'Inactive'}</Button>
+        </Flexbox>
         <p style="color: var(--color-text-secondary); margin-bottom: 1rem">{catalog.description}</p>
     </div>
-    <Flexbox gap="1rem">
-        <Tooltip text={catalog.apiStandard}>
-            <Button size="xs" variant="primary"><Icon icon="globe" margin="right"/>{catalog.apiUrl}</Button>
-        </Tooltip>
+    <Flexbox gap=".5rem">
+        <Button size="xs" variant="primary"><Icon icon="globe" margin="right"/>{catalog.apiUrl}</Button>
+        <Button size="xs">{catalog.apiStandard}</Button>
     </Flexbox>
 </Card>

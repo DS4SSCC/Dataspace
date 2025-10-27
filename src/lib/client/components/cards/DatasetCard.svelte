@@ -7,10 +7,11 @@
     import Tooltip from "$lib/client/components/Tooltip.svelte";
     import {sanitizeHtmlToPlainText} from "$lib/client/helpers/string.helper";
     import {getSectorFromThemeUriOrId} from "$lib/client/helpers/sector.helper";
+    import Icon from "$lib/client/components/icons/Icon.svelte";
 
     // Gebruik het nieuwe type voor de dataset
     // dataset is nu optioneel
-    let {dataset, fit, skeleton = false}: {
+    let {dataset, fit, skeleton = false, imported = 0, importable, onimport, onclick}: {
         dataset?: {
             id: string;
             title: string;
@@ -37,7 +38,11 @@
             contactPoint?: string;
         },
         fit?: boolean,
-        skeleton?: boolean // Nieuwe prop voor de skeleton mode
+        skeleton?: boolean,
+        importable?: boolean,
+        imported?: 0 | 1 | 2,
+        onimport?: () => void
+        onclick?: () => void
     } = $props();
 
     // sectors context (optioneel, aangepast aan nieuwe datastructuur)
@@ -82,8 +87,10 @@
             <Flexbox justify="space-between" align="center" gap=".5rem" style="margin-bottom: 1rem">
                 <!-- Placeholder voor SectorButton -->
                 <div style="background-color: var(--color-skeleton-bg, #e0e0e0); width: 60px; height: 20px; border-radius: 4px;"></div>
-                <!-- Placeholder voor datum -->
-                <div style="background-color: var(--color-skeleton-bg, #e0e0e0); width: 50px; height: 14px; border-radius: 2px;"></div>
+                {#if importable}
+                    <!-- Placeholder voor imported badge -->
+                    <div style="background-color: var(--color-skeleton-bg, #e0e0e0); width: 50px; height: 14px; border-radius: 2px;"></div>
+                {/if}
             </Flexbox>
 
             <div>
@@ -93,8 +100,8 @@
                 </h3>
                 <!-- Placeholder voor beschrijving -->
                 <p style="color: transparent; margin: 0.5rem 0 0 0; line-height: 1.4; user-select: none;">
-                <span style="background-color: var(--color-skeleton-bg, #e0e0e0); width: 100%; height: 12px; border-radius: 2px; margin-bottom: 4px;"></span>
-                <span style="background-color: var(--color-skeleton-bg, #e0e0e0); width: 70%; height: 12px; border-radius: 2px;"></span>
+                    <span style="background-color: var(--color-skeleton-bg, #e0e0e0); width: 100%; height: 12px; border-radius: 2px; margin-bottom: 4px;"></span>
+                    <span style="background-color: var(--color-skeleton-bg, #e0e0e0); width: 70%; height: 12px; border-radius: 2px;"></span>
                 </p>
             </div>
         </div>
@@ -115,9 +122,23 @@
                 {#if currentSector}
                     <SectorButton sector={currentSector} size="xs"/>
                 {/if}
-                <!--{#if dataset.modified}-->
-                <!--    <span style="font-size: small; color: var(&#45;&#45;color-text-secondary)">{formatDate(dataset.modified)}</span>-->
-                <!--{/if}-->
+                {#if importable}
+                    {#if imported === 1}
+                        <Button size="xs" variant="success">
+                            <Icon icon="check-lg" margin="right"/>
+                            Imported
+                        </Button>
+                    {:else if imported === 2}
+                        <Button size="xs" variant="warning">
+                            Importing...
+                        </Button>
+                    {:else}
+                        <Button size="xs" onclick={onimport}>
+                            <Icon icon="arrow-down-square" margin="right"/>
+                            Import
+                        </Button>
+                    {/if}
+                {/if}
             </Flexbox>
 
             <div>
@@ -130,7 +151,7 @@
 
         <Flexbox justify="space-between" align="center" style="margin-top: 1rem;">
             {#if dataset.landingPage}
-                <Button variant="text" size="sm" href={dataset.landingPage}>Bekijk Dataset</Button>
+                <Button variant="text" size="sm" onclick={onclick}>Bekijk Dataset</Button>
             {/if}
             {#if dataset.publisher?.name}
                 <Tooltip text={dataset.publisher.name}>
@@ -138,7 +159,7 @@
                             src="/publishers/{dataset.publisher.id.trim().replaceAll(' ', '-').toLowerCase()}/logo.svg"
                             height="20px"
                             alt="Logo van {dataset.publisher.name}"
-                            on:error={onImageError}
+                            onerror={onImageError}
                     />
                     <span style="display: none; font-size: small;">{dataset.publisher.name}</span>
                 </Tooltip>
