@@ -4,6 +4,6 @@ import {DatasetRepository} from "$lib/server/repositories/dataset.repository";
 
 export const load = Guard.load(async ({ locals }) => {
     return {
-        datasets: DatasetRepository.getAllWithCatalog()
+        datasets: await DatasetRepository.getAllWithCatalog()
     };
 });

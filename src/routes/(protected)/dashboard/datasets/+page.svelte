@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import Page from "$lib/client/components/Page.svelte";
     import Section from "$lib/client/components/Section.svelte";
     import Button from "$lib/client/components/Button.svelte";
@@ -9,100 +9,90 @@
     import Flexbox from "$lib/client/components/Flexbox.svelte";
     import Input from "$lib/client/components/form/Input.svelte";
     import {goto} from "$app/navigation";
+    import SectorButton from "$lib/client/components/buttons/SectorButton.svelte";
+    import {getSectorFromThemeUriOrId} from "$lib/client/helpers/sector.helper";
+    import Table from "$lib/client/components/table/Table.svelte";
+    import Item from "$lib/client/components/table/Item.svelte";
+    import Form from "$lib/client/components/form/Form.svelte";
 
-    // Dataset data
-    let datasets = [
-        {
-            id: 'ds-1',
-            name: 'COVID-19 Statistics',
-            description: 'Global COVID-19 statistics with daily updates',
-            size: '12.4 MB',
-            downloads: 1248,
-            access: 'public',
-            lastUpdated: '2023-10-20',
-            tags: ['health', 'statistics', 'covid']
-        },
-        {
-            id: 'ds-2',
-            name: 'Financial Market Data',
-            description: 'Real-time financial market data for major indices',
-            size: '8.7 MB',
-            downloads: 876,
-            access: 'protected',
-            lastUpdated: '2023-10-19',
-            tags: ['finance', 'market', 'stocks']
-        },
-        {
-            id: 'ds-3',
-            name: 'Weather Patterns',
-            description: 'Historical weather data for major cities',
-            size: '24.1 MB',
-            downloads: 542,
-            access: 'private',
-            lastUpdated: '2023-10-18',
-            tags: ['weather', 'climate', 'historical']
-        },
-        {
-            id: 'ds-4',
-            name: 'Population Census',
-            description: 'Decennial population census data',
-            size: '42.3 MB',
-            downloads: 2103,
-            access: 'public',
-            lastUpdated: '2023-10-15',
-            tags: ['population', 'demographics', 'census']
-        },
-        {
-            id: 'ds-5',
-            name: 'Economic Indicators',
-            description: 'Global economic indicators dataset',
-            size: '15.6 MB',
-            downloads: 634,
-            access: 'protected',
-            lastUpdated: '2023-10-10',
-            tags: ['economy', 'indicators', 'global']
-        }
-    ];
+    // Receive data from +page.server.ts
+    let { data } = $props<{
+        datasets: Array<{
+            id: string;
+            title: string;
+            description: string;
+            identifier: string; // External ID
+            catalog: {
+                title: string;
+            }; // If joined in repository
+            isPublished: boolean;
+            policyIntent: 'PUBLIC' | 'RESTRICTED' | 'INTERNAL';
+            importedAt: string; // ISO date string
+            publishedAt?: string; // ISO date string
+            // Add other fields if needed later
+        }>;
+    }>();
 
-    // Filters
-    let searchTerm = '';
-    let filterAccess = 'all';
-    let sortBy = 'name';
+    // Filters (initially empty)
+    let searchTerm = $state('');
+    let filterAccess = $state('all'); // 'all', 'PUBLIC', 'RESTRICTED', 'INTERNAL'
+    let sortBy = $state('title'); // 'title', 'importedAt'
 
-    // Filter and sort datasets
-    $: filteredDatasets = datasets
-        .filter(dataset => {
-            const matchesSearch = dataset.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    // Derived filtered and sorted datasets
+    let filteredDatasets = $derived.by(() => {
+        let result = data.datasets.filter(dataset => {
+            const matchesSearch = dataset.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 dataset.description.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesAccess = filterAccess === 'all' || dataset.access === filterAccess;
+            const matchesAccess = filterAccess === 'all' || dataset.policyIntent === filterAccess;
             return matchesSearch && matchesAccess;
-        })
-        .sort((a, b) => {
-            if (sortBy === 'name') return a.name.localeCompare(b.name);
-            if (sortBy === 'downloads') return b.downloads - a.downloads;
-            if (sortBy === 'lastUpdated') return new Date(b.lastUpdated) - new Date(a.lastUpdated);
+        });
+
+        // Sort
+        result.sort((a, b) => {
+            if (sortBy === 'title') return a.title.localeCompare(b.title);
+            if (sortBy === 'importedAt') return new Date(b.importedAt).getTime() - new Date(a.importedAt).getTime();
+            // Add other sort options if needed
             return 0;
         });
 
-    // Toggle dataset access
-    function toggleAccess(id) {
-        const dataset = datasets.find(d => d.id === id);
-        if (dataset) {
-            if (dataset.access === 'public') dataset.access = 'private';
-            else if (dataset.access === 'private') dataset.access = 'protected';
-            else dataset.access = 'public';
-        }
+        return result;
+    });
+
+    // Helper function to format dates
+    function formatDate(dateStr: string | undefined): string {
+        if (!dateStr) return '—';
+        return new Date(dateStr).toLocaleDateString('nl-NL', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
     }
 
-    // Delete dataset
-    function deleteDataset(id) {
-        datasets = datasets.filter(d => d.id !== id);
+    // Helper function to get badge variant based on policy
+    function getPolicyVariant(policy: string): string {
+        if (policy === 'PUBLIC') return 'success';
+        if (policy === 'RESTRICTED') return 'warning';
+        return 'secondary'; // INTERNAL or unknown
+    }
+
+    // Helper function to confirm deletion before submitting the form
+    async function confirmAndSubmit(event: SubmitEvent, datasetTitle: string) {
+        const formElement = event.currentTarget as HTMLFormElement;
+        if (confirm(`Are you sure you want to delete the dataset "${datasetTitle}"? This action cannot be undone.`)) {
+            // Proceed with the form submission
+            // The form's action="?/deleteDataset" will handle the submission
+            // No need to call formElement.requestSubmit() explicitly here
+            // as the default form submission will occur if confirm is true.
+        } else {
+            // Prevent the form from submitting if the user cancels
+            event.preventDefault();
+        }
     }
 </script>
 
-<Page title="My Datasets" description="Manage your datasets and track their usage">
+<Page title="My Datasets" description="Manage your imported datasets and their publication status">
     {#snippet suffix()}
-        <Button variant="primary">
+        <Button variant="primary" disabled> <!-- Disable upload for now, out of scope -->
             <Icon icon="plus-lg" margin="right"/>
             Upload Dataset
         </Button>
@@ -127,9 +117,9 @@
                         --border="none"
                         options={[
                         {label: "All Access", value: 'all'},
-                        {label: "Public", value: 'public'},
-                        {label: "Protected", value: 'protected'},
-                        {label: "Private", value: 'private'}
+                        {label: "Public", value: 'PUBLIC'},
+                        {label: "Restricted", value: 'RESTRICTED'},
+                        {label: "Internal", value: 'INTERNAL'}
                     ]}
                 />
             </Card>
@@ -140,9 +130,8 @@
                         --bg="transparent"
                         --border="none"
                         options={[
-                        {label: "Sort by Name", value: 'name'},
-                        {label: "Downloads", value: 'downloads'},
-                        {label: "Last Updated", value: 'lastUpdated'}
+                        {label: "Sort by Name", value: 'title'},
+                        {label: "Imported Date", value: 'importedAt'}
                     ]}
                 />
             </Card>
@@ -151,75 +140,61 @@
 
     <Section>
         <Card>
-            <div class="table-container">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Dataset</th>
-                        <th>Description</th>
-                        <th>Size</th>
-                        <th>Downloads</th>
-                        <th>Access</th>
-                        <th>Last Updated</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {#each filteredDatasets as dataset}
-                        <tr>
-                            <td onclick={()=> goto('/dashboard/datasets/dummy')} style="cursor: pointer">
-                                <div class="dataset-info">
-                                    <Button size="lg" --color="var(--color-primary)">
-                                        <Icon icon="file-earmark-spreadsheet" />
-                                    </Button>
-                                    <div>
-                                        <div class="dataset-name">{dataset.name}</div>
-                                        <div class="dataset-tags">
-                                            {#each dataset.tags as tag}
-                                                <Button size="xs">{tag}</Button>
-                                            {/each}
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>{dataset.description}</td>
-                            <td>{dataset.size}</td>
-                            <td>
-                                <div class="downloads-cell">
-                                    <Icon icon="download" /> {dataset.downloads}
-                                </div>
-                            </td>
-                            <td>
-                                    <span class={`access ${dataset.access}`}>
-                                        {dataset.access}
-                                    </span>
-                            </td>
-                            <td>{dataset.lastUpdated}</td>
-                            <td>
-                                <Flexbox gap="0.5rem">
-                                    <Button size="sm">
-                                        <Icon icon="pencil" />
-                                    </Button>
-                                    <Button size="sm" onclick={() => toggleAccess(dataset.id)}>
-                                        <Icon icon="lock" />
-                                    </Button>
-                                    <Button size="sm" --color="var(--color-danger)" onclick={() => deleteDataset(dataset.id)}>
+            <Table>
+                {#snippet head()}
+                    <Item type="row">
+                        <Item type="header">Dataset</Item>
+                        <Item type="header">Source</Item>
+                        <Item type="header">Published</Item>
+                        <Item type="header">Policy</Item>
+                        <Item type="header">Imported</Item>
+                        <Item type="header">Actions</Item>
+                    </Item>
+                {/snippet}
+                {#each filteredDatasets as dataset (dataset.id)}
+                    <Item type="row">
+                        <Item onclick={() => goto(`/dashboard/datasets/${dataset.id}`)} style="cursor: pointer">
+                            <div class="dataset-name">{dataset.title}</div>
+                            <SectorButton sector={getSectorFromThemeUriOrId(dataset?.theme)} size="xs"/>
+                        </Item>
+                        <Item>{dataset.catalog?.title || 'N/A'}</Item>
+                        <Item>
+                                <span class={`access ${dataset.isPublished ? 'published' : 'not-published'}`}>
+                                    {dataset.isPublished ? 'Yes' : 'No'}
+                                </span>
+                        </Item>
+                        <Item>
+                            <Button size="sm" variant={getPolicyVariant(dataset.policyIntent)}>
+                                {dataset.policyIntent}
+                            </Button>
+                        </Item>
+                        <Item>{formatDate(dataset.importedAt)}</Item>
+                        <Item>
+                            <Flexbox gap="0.5rem">
+                                <Button size="sm" onclick={() => goto(`/dashboard/datasets/${dataset.id}`)}>
+                                    <Icon icon="eye" />
+                                </Button>
+                                <!-- Edit button can be added later if needed -->
+                                <Button size="sm">
+                                    <Icon icon="pencil" />
+                                </Button>
+                                <!-- Delete button wrapped in a form -->
+                                <Form action="/dashboard/datasets/{dataset.id}?/delete" method="POST">
+                                    <Button size="sm" --color="var(--color-danger)" type="submit">
                                         <Icon icon="trash" />
                                     </Button>
-                                </Flexbox>
-                            </td>
-                        </tr>
-                    {/each}
-                    </tbody>
-                </table>
-
-                {#if filteredDatasets.length === 0}
-                    <div class="no-results">
-                        <Icon icon="folder" size="3x" />
-                        <p>No datasets found matching your criteria</p>
-                    </div>
-                {/if}
-            </div>
+                                </Form>
+                            </Flexbox>
+                        </Item>
+                    </Item>
+                {/each}
+            </Table>
+            {#if filteredDatasets.length === 0}
+                <div class="no-results">
+                    <Icon icon="folder" size="3x" />
+                    <p>No datasets found matching your criteria</p>
+                </div>
+            {/if}
         </Card>
     </Section>
 
@@ -229,89 +204,44 @@
                 <Card fit>
                     <h3>Dataset Statistics</h3>
                     <div class="stat-card">
-                        <div class="stat-value">{datasets.length}</div>
+                        <div class="stat-value">{data.datasets.length}</div>
                         <div class="stat-label">Total Datasets</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value">{datasets.reduce((sum, ds) => sum + ds.downloads, 0)}</div>
-                        <div class="stat-label">Total Downloads</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">{datasets.filter(ds => ds.access === 'public').length}</div>
-                        <div class="stat-label">Public Datasets</div>
-                    </div>
+                    <div class="stat-value">{data.datasets.filter(ds => ds.isPublished).length}</div>
+                    <div class="stat-label">Published Datasets</div>
+                    <div class="stat-value">{data.datasets.filter(ds => ds.policyIntent === 'PUBLIC').length}</div>
+                    <div class="stat-label">Public Datasets</div>
                 </Card>
             </Col>
             <Col>
                 <Card fit>
-                    <h3>Access Distribution</h3>
+                    <h3>Policy Distribution</h3>
                     <div class="chart-container">
-                        <div class="chart-bar">
-                            <div class="chart-label">Public</div>
-                            <div class="chart-bar-inner">
-                                <div
-                                        class="chart-bar-fill"
-                                        style="width: {datasets.filter(ds => ds.access === 'public').length / datasets.length * 100}%"
-                                ></div>
-                                <div class="chart-bar-text">
-                                    {Math.round(datasets.filter(ds => ds.access === 'public').length / datasets.length * 100)}%
+                        {#each ['PUBLIC', 'RESTRICTED', 'INTERNAL'] as policy}
+                            <div class="chart-bar">
+                                <div class="chart-label">{policy}</div>
+                                <div class="chart-bar-inner">
+                                    <div
+                                            class="chart-bar-fill"
+                                            style="width: {Math.round((data.datasets.filter(ds => ds.policyIntent === policy).length / data.datasets.length) * 100)}%"
+                                    ></div>
+                                    <div class="chart-bar-text">
+                                        {Math.round((data.datasets.filter(ds => ds.policyIntent === policy).length / data.datasets.length) * 100)}%
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="chart-bar">
-                            <div class="chart-label">Protected</div>
-                            <div class="chart-bar-inner">
-                                <div
-                                        class="chart-bar-fill"
-                                        style="width: {datasets.filter(ds => ds.access === 'protected').length / datasets.length * 100}%"
-                                ></div>
-                                <div class="chart-bar-text">
-                                    {Math.round(datasets.filter(ds => ds.access === 'protected').length / datasets.length * 100)}%
-                                </div>
-                            </div>
-                        </div>
-                        <div class="chart-bar">
-                            <div class="chart-label">Private</div>
-                            <div class="chart-bar-inner">
-                                <div
-                                        class="chart-bar-fill"
-                                        style="width: {datasets.filter(ds => ds.access === 'private').length / datasets.length * 100}%"
-                                ></div>
-                                <div class="chart-bar-text">
-                                    {Math.round(datasets.filter(ds => ds.access === 'private').length / datasets.length * 100)}%
-                                </div>
-                            </div>
-                        </div>
+                        {/each}
                     </div>
                 </Card>
             </Col>
         </Row>
     </Section>
+    <Section>
+        <pre><code>{JSON.stringify(data.datasets, null,2)}</code></pre>
+    </Section>
 </Page>
 
 <style>
-    .table-container {
-        overflow: hidden;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th {
-        padding: 15px;
-        text-align: left;
-        font-weight: 600;
-        border-bottom: 1px solid var(--color-border-primary);
-    }
-
-    td {
-        padding: 15px;
-        border-bottom: 1px solid var(--color-border-primary);
-        vertical-align: middle;
-    }
-
     .dataset-info {
         display: flex;
         align-items: center;
@@ -404,5 +334,12 @@
         color: white;
         font-weight: 500;
         font-size: 0.8rem;
+    }
+
+    .access.published {
+        color: var(--color-success);
+    }
+    .access.not-published {
+        color: var(--color-secondary);
     }
 </style>
