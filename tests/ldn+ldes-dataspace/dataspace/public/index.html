@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8" />
+    <title>Dataspace Simulatie Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header>
+    <h1>Dataspace Simulatie</h1>
+    <p>
+        Deze simulatie laat zien hoe een <strong>Dataspace</strong> werkt:
+        een netwerk waarin <strong>Data Providers</strong> hun gegevens beschikbaar stellen via
+        <abbr title="Linked Data Event Stream">LDES</abbr>
+        en notificaties sturen via
+        <abbr title="Linked Data Notifications">LDN</abbr>
+        naar een <strong>Registry</strong> (de kern van de dataspace).
+    </p>
+</header>
+
+<main id="dashboard">
+    <section id="legend">
+        <h2>Wat gebeurt er?</h2>
+        <ul>
+            <li><strong>Provider → LDES:</strong> Provider publiceert data op een <em>Linked Data Event Stream</em>. Dit is de feitelijke dataset die je kunt ophalen.</li>
+            <li><strong>Provider → LDN → Registry:</strong> Provider stuurt een <em>Linked Data Notification</em> naar de registry om te melden dat er nieuwe data beschikbaar is. De registry haalt dan de data via LDES op.</li>
+            <li><strong>Registry (Dataspace):</strong> Ontvangt de notificatie, haalt LDES-data op en bouwt een gezamenlijke catalogus van alle metadata.</li>
+        </ul>
+    </section>
+    <div class="entity provider" id="providerA">
+        <h2>Provider A</h2>
+        <p>Publiceert een LDES-endpoint en stuurt LDN-notificaties naar de registry.</p>
+        <button onclick="produce('3001')">Produce Event</button>
+    </div>
+
+    <div class="connection">
+        <div class="arrow" id="arrowA"></div>
+        <span>LDN Notify</span>
+    </div>
+
+    <div class="entity registry" id="registry">
+        <h2>Registry (Dataspace)</h2>
+        <p>
+            Ontvangt notificaties via een LDN-inbox, haalt de LDES-data op en
+            bouwt een gezamenlijke <em>catalogus</em> van alle ontvangen metadata.
+        </p>
+        <button onclick="loadCatalog()">Bekijk Catalogus</button>
+        <pre id="catalog"></pre>
+    </div>
+
+    <div class="connection">
+        <div class="arrow" id="arrowB"></div>
+        <span>LDN Notify</span>
+    </div>
+
+    <div class="entity provider" id="providerB">
+        <h2>Provider B</h2>
+        <p>Publiceert ook een LDES-endpoint en deelt updates met de dataspace.</p>
+        <button onclick="produce('3002')">Produce Event</button>
+    </div>
+</main>
+
+<section id="log-section">
+    <h2>Live Simulatie Log</h2>
+    <p>Hieronder zie je de gebeurtenissen in real-time: events, notificaties en data-uitwisseling.</p>
+    <pre id="log"></pre>
+</section>
+
+<footer>
+    <p>
+        Gebouwd als educatieve demo voor <strong>Linked Data</strong> & <strong>Dataspaces</strong>.
+    </p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
