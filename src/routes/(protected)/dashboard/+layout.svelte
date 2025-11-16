@@ -16,10 +16,10 @@
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
             <NavbarItem href="/dashboard/analytics">Analytics</NavbarItem>
             <NavbarItem href="/dashboard/catalogs">Catalogs</NavbarItem>
-            <NavbarItem href="/dashboard/account">Account</NavbarItem>
             <NavbarItem href="/dashboard/datasets">Datasets</NavbarItem>
             <NavbarItem href="/dashboard/requests">Requests</NavbarItem>
             <NavbarItem href="/dashboard/api">API</NavbarItem>
+            <NavbarItem href="/dashboard/account">Account</NavbarItem>
         </div>
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
             <NavbarItem href="/dashboard/account" --color-inactive="var(--color-text-primary)">

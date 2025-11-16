@@ -13,9 +13,6 @@
     import SectionHeader from "$lib/client/components/SectionHeader.svelte";
     import Card from "$lib/client/components/Card.svelte";
     import {goto} from "$app/navigation";
-    import SectorButton from "$lib/client/components/buttons/SectorButton.svelte";
-    import SidebarLayout from "$lib/client/components/SidebarLayout.svelte";
-    import Searchbar from "$lib/client/components/form/Searchbar.svelte";
     import {addToast} from "$lib/client/stores/toast.store";
 
     let {data} = $props();
@@ -23,6 +20,8 @@
     let editCatalogModal = $state({show: false});
     let importModal = $state<{ show: boolean; dataset: any | null }>({show: false, dataset: null});
     let searchInput = $state('');
+
+    let ds = $derived(data.catalog.datasets);
 
     // We'll store the resolved datasets here once available
     let resolvedDatasets: any[] = $state([]);
@@ -81,6 +80,12 @@
     <Section>
         <Flexbox justify="flex-end" gap=".5rem">
             <Flexbox columnGap=".5rem">
+                <Form action="?/deleteCatalog" method="POST">
+                    <Button variant="danger" type="submit">
+                        <Icon icon="trash-fill" margin="right"/>
+                        Remove
+                    </Button>
+                </Form>
                 <Button onclick={()=> editCatalogModal.show = true}>
                     <Icon icon="pencil-fill" margin="right"/>
                     Edit
@@ -143,7 +148,6 @@
     </Section>
     <!--Debugging-->
     <Section>
-        <pre><code>{JSON.stringify(filterDatasets(data.datasets), null, 2)}</code></pre>
         <pre><code>{JSON.stringify(data.localDatasets, null, 2)}</code></pre>
     </Section>
 </Page>

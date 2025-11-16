@@ -5,9 +5,9 @@
     import {getContext} from "svelte";
     import Flexbox from "$lib/client/components/Flexbox.svelte";
     import Tooltip from "$lib/client/components/Tooltip.svelte";
-    import {sanitizeHtmlToPlainText} from "$lib/client/helpers/string.helper";
     import {getSectorFromThemeUriOrId} from "$lib/client/helpers/sector.helper";
     import Icon from "$lib/client/components/icons/Icon.svelte";
+    import {marked} from "marked";
 
     // Gebruik het nieuwe type voor de dataset
     // dataset is nu optioneel
@@ -143,9 +143,9 @@
 
             <div>
                 <h4>{dataset.title}</h4>
-                <p style="color: var(--color-text-secondary); display: -webkit-box; -webkit-line-clamp: 2;line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis">
-                    {sanitizeHtmlToPlainText(dataset.description)}
-                </p>
+                <div style="color: var(--color-text-secondary); display: -webkit-box; -webkit-line-clamp: 2;line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis">
+                    {@html marked(dataset.description || '<em>No description available.</em>')}
+                </div>
             </div>
         </div>
 

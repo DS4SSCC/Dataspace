@@ -9,6 +9,7 @@
     import SectorButton from "$lib/client/components/buttons/SectorButton.svelte";
     import Input from "$lib/client/components/form/Input.svelte"; // Assuming you have this
     import {getSectorFromThemeUriOrId} from "$lib/client/helpers/sector.helper.ts";
+    import {marked} from "marked";
 
     let {data} = $props<{
         dataset: {
@@ -139,7 +140,7 @@
     <Section>
         <SectionHeader title="Description"/>
         <Card>
-            {@html data.dataset?.description || '<em>No description available.</em>'}
+            {@html marked(data.dataset?.description || '<em>No description available.</em>')}
         </Card>
     </Section>
 

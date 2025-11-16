@@ -88,9 +88,48 @@ export const actions: Actions = {
         });
 
         // Redirect naar de detailpagina van de bijgewerkte catalogus of naar het overzicht
-        redirect(303, `/catalogs/${updatedCatalog.id}`); // Of naar '/catalogs' voor het overzicht
+        redirect(303, `/dashboard/catalogs/${updatedCatalog.id}`); // Of naar '/catalogs' voor het overzicht
 
     }, form.guard),
+    deleteCatalog: Guard.action(async ({ params }) => {
+        const { catalog_id } = params;
+
+        if (!catalog_id) {
+            return fail(400, { message: 'Catalog ID is required' });
+        }
+
+        // Retrieve catalog to check if it exists before deleting
+        const existingCatalog = await CatalogRepository.getById(catalog_id);
+        if (!existingCatalog) {
+            return fail(404, { message: 'Catalog not found' });
+        }
+
+        // --- CRITICAL STEP: Delete associated datasets first ---
+        // Use the DatasetRepository function you created to delete all datasets linked to this catalog ID
+        try {
+            await DatasetRepository.deleteByCatalogId(catalog_id);
+            console.log(`Deleted datasets associated with catalog ID: ${catalog_id}`);
+        } catch (datasetDeleteErr) {
+            console.error('Error deleting datasets for catalog:', catalog_id, datasetDeleteErr);
+            // Depending on your error handling strategy, you might fail here or proceed.
+            // Failing here prevents orphaned datasets but stops the catalog deletion if the dataset deletion fails.
+            // For robustness, you might want to log and potentially alert, but allow catalog deletion to proceed.
+            // However, for data integrity, it's often better to fail if dependencies cannot be removed.
+            // Let's fail for now to ensure data integrity.
+            return fail(500, { message: 'Failed to delete associated datasets. Catalog deletion aborted.' });
+        }
+
+        // Perform the catalog deletion using the repository
+        try {
+            await CatalogRepository.deleteById(catalog_id);
+        } catch (err) {
+            console.error('Error deleting catalog:', err);
+            return fail(500, { message: 'Failed to delete catalog' });
+        }
+
+        // Redirect to the main catalogs list page after successful deletion
+        redirect(303, '/dashboard/catalogs');
+    }, form.guard), // Assuming you use a form guard helper
     importDataset: Guard.action(async (event) => {
         const { guard: { form }, params: { catalog_id } } = event;
 

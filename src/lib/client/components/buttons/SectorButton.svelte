@@ -14,7 +14,8 @@
         "sector-housing": "house-door",
         "sector-economy": "graph-up-arrow",
         "sector-culture": "book-half",
-        "sector-governance": "bank"
+        "sector-governance": "bank",
+        "sector-debugging": "bug-fill"
     };
 </script>
 

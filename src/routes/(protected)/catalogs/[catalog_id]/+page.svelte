@@ -91,9 +91,9 @@
                 </Flexbox>
             {/await}
         </Section>
-        <!--        <Section>-->
-        <!--            <pre><code>{JSON.stringify(datasets, null, 2)}</code></pre>-->
-        <!--        </Section>-->
+        <Section>
+<!--            <pre><code>{JSON.stringify(datasets, null, 2)}</code></pre>-->
+        </Section>
     </Page>
 </SidebarLayout>
 

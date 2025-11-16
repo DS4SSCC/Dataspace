@@ -56,6 +56,11 @@ export const SECTORS: Sector[] = [
         "id": "sector-governance",
         "name": "Governance & Participation",
         "description": "Datasets about open government, citizen participation and policy transparency."
+    },
+    {
+        "id": "sector-debugging",
+        "name": "Test & Debugging",
+        "description": "Datasets used for testing and debugging purposes."
     }
 ];
 
@@ -64,6 +69,7 @@ const SECTOR_MAPPING: Record<string, string> = {
     // Mobility & Transport
     "Verkeer": "sector-mobility",
     "Ruimte en infrastructuur": "sector-mobility",
+    "ruimte-en-infrastructuur": "sector-mobility",
     "Transport": "sector-mobility",
     "Mobility": "sector-mobility",
     "Traffic": "sector-mobility",
@@ -84,6 +90,7 @@ const SECTOR_MAPPING: Record<string, string> = {
 
     // Environment & Climate
     "Natuur en milieu": "sector-environment",
+    "natuur-en-milieu": "sector-environment",
     "Environment": "sector-environment",
     "Climate": "sector-environment",
     "Air Quality": "sector-environment",
@@ -92,6 +99,7 @@ const SECTOR_MAPPING: Record<string, string> = {
     "Geluid": "sector-environment",
     "Green Spaces": "sector-environment",
     "Nature": "sector-environment",
+
 
     // Waste & Circularity
     "Huishoudelijk afval": "sector-waste", // Specifiek voor Rotterdam
@@ -104,6 +112,7 @@ const SECTOR_MAPPING: Record<string, string> = {
 
     // Health & Wellbeing
     "Zorg en Gezondheid": "sector-health",
+    "zorg-en-gezondheid": "sector-health",
     "Health": "sector-health",
     "Wellbeing": "sector-health",
     "Hospital": "sector-health",
@@ -133,6 +142,7 @@ const SECTOR_MAPPING: Record<string, string> = {
 
     // Economy & Innovation
     "Economie": "sector-economy",
+    "economie": "sector-economy",
     "Economy": "sector-economy",
     "Innovation": "sector-economy",
     "Startups": "sector-economy",
@@ -140,15 +150,18 @@ const SECTOR_MAPPING: Record<string, string> = {
     "Retail": "sector-economy",
     "Sales": "sector-economy",
     "Employment": "sector-economy",
+    "werk": "sector-economy",
 
     // Culture & Education
     "Cultuur en recreatie": "sector-culture",
+    "cultuur-en-recreatie": "sector-culture",
     "Culture": "sector-culture",
     "Recreation": "sector-culture",
     "Museums": "sector-culture",
     "Events": "sector-culture",
     "Concerts": "sector-culture",
     "Onderwijs en wetenschap": "sector-culture", // Onderwijs
+    "onderwijs-en-wetenschap": "sector-culture",
     "Education": "sector-culture",
     "Schools": "sector-culture",
     "Universities": "sector-culture",
@@ -164,7 +177,10 @@ const SECTOR_MAPPING: Record<string, string> = {
     "Raad": "sector-governance", // Dutch for Council
     "Politics": "sector-governance",
     "Government": "sector-governance",
-    "Spending": "sector-governance"
+    "Spending": "sector-governance",
+
+    // debug
+    "david": "sector-debugging"
 };
 
 /**
@@ -219,6 +235,10 @@ export function mapThemeUriToSector(themeUri: string, sectors: Sector[] = SECTOR
                     const mappedIdFromLower = mapping[foundKey];
                     matchedSector = sectors.find(sector => sector.id === mappedIdFromLower) || null;
                 }
+            }
+            if (!matchedSector && extractedTheme) {
+                // Only in development, or based on a debug flag
+                console.warn(`[Sector Mapping] Unmapped theme: "${extractedTheme}" from URI: "${themeUri}"`);
             }
         }
     } catch (err) {
