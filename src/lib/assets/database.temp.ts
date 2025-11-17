@@ -880,7 +880,6 @@ export const databaseTemp = {
             "description": "Datasets about open government, citizen participation and policy transparency."
         }
     ],
-
     catalogs: [
         {
             "@id": "catalog-eindhoven",

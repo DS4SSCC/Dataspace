@@ -11,12 +11,12 @@
     import SidebarLayout from "$lib/client/components/SidebarLayout.svelte";
     import Section from "$lib/client/components/Section.svelte";
     import Icon from "$lib/client/components/icons/Icon.svelte";
+    import {goto} from "$app/navigation";
 
     const {data} = $props();
 
     let sidebarState = $state<{show: boolean}>({show: true})
-
-    setContext("sectors", data.sectors);
+    setContext("catalogs", data.catalogs);
 </script>
 
 <SidebarLayout bind:show={sidebarState.show}>
@@ -28,17 +28,17 @@
         <div style="margin-bottom: 1rem;">
             <h3>Sectors</h3>
             <div style="display: flex; gap: .5rem; flex-wrap: wrap;">
-                {#each data.sectors as sector}
-                    <SectorButton {sector} size="xs" style="white-space: nowrap">{sector.name}</SectorButton>
-                {/each}
+                <!--{#each data.sectors as sector}-->
+                <!--    <SectorButton {sector} size="xs" style="white-space: nowrap">{sector.name}</SectorButton>-->
+                <!--{/each}-->
             </div>
         </div>
         <div style="margin-bottom: 1rem;">
             <h3>Catalogs</h3>
             <div style="display: flex; gap: .5rem; flex-wrap: wrap;">
-                {#each data.catalogs as catalog}
-                    <Button size="sm" style="white-space: nowrap">{catalog["dct:title"]}</Button>
-                {/each}
+                <!--{#each data.catalogs as catalog}-->
+                <!--    <Button size="sm" style="white-space: nowrap">{catalog["dct:title"]}</Button>-->
+                <!--{/each}-->
             </div>
         </div>
     {/snippet}
@@ -50,11 +50,12 @@
             <Row xs={1} md={2} xxl={3}>
                 {#each data.datasets as dataset}
                     <Col>
-                        <DatasetCard {dataset} fit/>
+                        <DatasetCard {dataset} fit onclick={() => goto(`/datasets/${dataset.id}`)}/>
                     </Col>
                 {/each}
             </Row>
         </Section>
+        <pre>{JSON.stringify(data.session, null, 2)}</pre>
     </Page>
 </SidebarLayout>
 

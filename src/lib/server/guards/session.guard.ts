@@ -40,6 +40,17 @@ export const SessionGuard = {
             session: input.locals.session as NonNullable<App.Locals['session']>
         };
     },
+    optional: async (input: GuardInput) => {
+        if (input.locals.session)
+            input.locals.session = {
+                ...input.locals.session,
+                ...(await SessionExtension(input.locals.session, input))
+            };
+
+        return {
+            session: input.locals.session
+        };
+    },
     /**
      * Ask the user to log in if no session exists and return to the original point when logged-in.
      * @param input RequestEvent

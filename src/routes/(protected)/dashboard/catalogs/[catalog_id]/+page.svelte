@@ -14,6 +14,7 @@
     import Card from "$lib/client/components/Card.svelte";
     import {goto} from "$app/navigation";
     import {addToast} from "$lib/client/stores/toast.store";
+    import {setContext} from "svelte";
 
     let {data} = $props();
 
@@ -68,15 +69,10 @@
         importModal.dataset = null;
     }
 
+    setContext("catalogs", [data.catalog]);
 </script>
 
-<Page title={data.catalog.title} description={data.catalog.description}>
-    {#snippet prefix()}
-        <Button style="margin-bottom: 1rem" size="sm" onclick={()=> goto('/dashboard/catalogs')}>
-            <Icon icon="arrow-left" margin="right"/>
-            Catalogs
-        </Button>
-    {/snippet}
+<Page title={data.catalog.title} description={data.catalog.description} previous_href="/dashboard/catalogs" previous_label="Catalogs" breakpoints>
     <Section>
         <Flexbox justify="flex-end" gap=".5rem">
             <Flexbox columnGap=".5rem">

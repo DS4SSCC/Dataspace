@@ -18,11 +18,13 @@
             description: string;
             issued?: string; // ISO 8601 date
             modified?: string; // ISO 8601 date
+            catalogId?: string;
             publisher: {
                 id: string;
                 name: string;
             };
             themes: string[]; // URIs
+            theme: string; // URIs
             keywords: string[];
             distributions: {
                 id: string;
@@ -45,36 +47,18 @@
         onclick?: () => void
     } = $props();
 
-    // sectors context (optioneel, aangepast aan nieuwe datastructuur)
-    const sectors = getContext<{ id: string, name: string, description: string }[]>("sectors");
-
-    // Vind de sector op basis van de eerste theme URI (of pas aan aan jouw logica)
-    // Alleen uitvoeren als dataset beschikbaar is en niet in skeleton mode
+    const catalogs = getContext<{ id: string, name: string, description: string }[]>("catalogs");
     const currentSector = $derived.by(() => {
         if (skeleton || !dataset) return undefined; // Geen sector als skeleton of geen dataset
+
         try {
-            return getSectorFromThemeUriOrId(dataset.themes[0]);
+            if (Array.isArray(dataset.themes)) return getSectorFromThemeUriOrId(dataset.themes[0]);
+            if (dataset.theme) return getSectorFromThemeUriOrId(dataset.theme);
         } catch (err) {
             return undefined;
         }
     });
-
-    // Hulpfunctie om datum te formatteren (optioneel)
-    const formatDate = (dateString?: string): string => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        return isNaN(date.getTime()) ? '' : date.toLocaleDateString();
-    };
-
-    // Functie voor de fallback als de afbeelding faalt
-    function onImageError(event: Event) {
-        const target = event.target as HTMLImageElement;
-        // Verberg de img tag als de fallback is getoond
-        target.style.display = 'none';
-        // Optioneel: je kunt ook een placeholder-afbeelding instellen
-        // target.src = '/path/to/placeholder-logo.svg';
-        // Of het hele Tooltip component aanpassen, bijv. alleen de naam tonen zonder img
-    }
+    const catalog = $derived.by(()=> catalogs.find(catalog => catalog.id === dataset?.catalogId));
 
     // Bepaal of de skeleton mode actief is
     const isSkeleton = $derived(skeleton || !dataset);
@@ -141,29 +125,51 @@
                 {/if}
             </Flexbox>
 
-            <div>
+            <div role="presentation" {onclick} style:cursor={onclick ? 'pointer' : 'auto'}>
                 <h4>{dataset.title}</h4>
-                <div style="color: var(--color-text-secondary); display: -webkit-box; -webkit-line-clamp: 2;line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis">
+                <div class="description">
                     {@html marked(dataset.description || '<em>No description available.</em>')}
                 </div>
             </div>
         </div>
+        {#if catalog}
+            <Flexbox justify="flex-end" align="center" style="margin-top: 1rem;">
+                {#if catalog.name}
+                    <Tooltip text={catalog.title}>
+                        <img
+                                src={catalog.logoUrl}
+                                height="20px"
+                                alt="Logo van {catalog.title}"
+                                onerror={(event) => (event.target as HTMLImageElement).style.display = 'none'}
+                        />
+                        <span style="display: none; font-size: small;">{catalog.title}</span>
+                    </Tooltip>
+                {/if}
+            </Flexbox>
+        {/if}
 
-        <Flexbox justify="space-between" align="center" style="margin-top: 1rem;">
-            {#if dataset.landingPage}
-                <Button variant="text" size="sm" onclick={onclick}>Bekijk Dataset</Button>
-            {/if}
-            {#if dataset.publisher?.name}
-                <Tooltip text={dataset.publisher.name}>
-                    <img
-                            src="/publishers/{dataset.publisher.id.trim().replaceAll(' ', '-').toLowerCase()}/logo.svg"
-                            height="20px"
-                            alt="Logo van {dataset.publisher.name}"
-                            onerror={onImageError}
-                    />
-                    <span style="display: none; font-size: small;">{dataset.publisher.name}</span>
-                </Tooltip>
-            {/if}
-        </Flexbox>
     {/if}
 </Card>
+
+<!--<pre>{JSON.stringify(catalog, null, 2)}</pre>-->
+
+<style lang="scss">
+    .description{
+      color: var(--color-text-secondary);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: left;
+      :global(*){
+        font-style: inherit !important;
+        font-family: inherit !important;
+        background: none !important;
+        font-weight: inherit !important;
+        text-align: inherit !important;
+        font-size: small !important;
+      }
+    }
+</style>

@@ -14,6 +14,7 @@
     import Table from "$lib/client/components/table/Table.svelte";
     import Item from "$lib/client/components/table/Item.svelte";
     import Form from "$lib/client/components/form/Form.svelte";
+    import {setContext} from "svelte";
 
     // Receive data from +page.server.ts
     let { data } = $props<{
@@ -88,6 +89,9 @@
             event.preventDefault();
         }
     }
+
+    setContext("sectors", data.sectors);
+    setContext("catalogs", data.catalogs);
 </script>
 
 <Page title="My Datasets" description="Manage your imported datasets and their publication status">
@@ -237,7 +241,7 @@
         </Row>
     </Section>
     <Section>
-        <pre><code>{JSON.stringify(data.datasets, null,2)}</code></pre>
+        <pre><code>{JSON.stringify(data, null,2)}</code></pre>
     </Section>
 </Page>
 

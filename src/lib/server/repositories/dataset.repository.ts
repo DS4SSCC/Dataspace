@@ -86,6 +86,9 @@ export const DatasetRepository = {
     getByCatalogId: (catalogId: string): Promise<Dataset[]> =>
         prisma.dataset.findMany({
             where: {catalogId},
+            include: {
+                catalog: true
+            },
             orderBy: {title: 'asc'}
         }),
 
@@ -218,6 +221,7 @@ export const DatasetRepository = {
         prisma.dataset.findUnique({
             where: {
                 id
-            }
+            },
+            include: {catalog: true}
         }),
 };

@@ -4,7 +4,7 @@
     import NavbarItem from "$lib/client/components/navbar/NavbarItem.svelte";
     import {session} from "$lib/client/stores/session.store.svelte";
 
-    let {children} = $props();
+    let {data, children} = $props();
 </script>
 
 <svelte:head>
@@ -22,9 +22,15 @@
             <NavbarItem href="/dashboard/account">Account</NavbarItem>
         </div>
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
-            <NavbarItem href="/dashboard/account" --color-inactive="var(--color-text-primary)">
-                Logged in as {session.user.full_name}
-            </NavbarItem>
+            {#if data.session}
+                <NavbarItem href="/dashboard" --color-inactive="var(--color-text-primary)">
+                    {data.session.user.full_name}
+                </NavbarItem>
+            {:else}
+                <NavbarItem href="/login" --color-inactive="var(--color-text-primary)">
+                    Login
+                </NavbarItem>
+            {/if}
         </div>
     </div>
 </Navbar>
