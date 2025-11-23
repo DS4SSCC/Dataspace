@@ -32,7 +32,8 @@ model User {
   password_digest String
 
   //relations
-  sessions Session[]
+  sessions     Session[]
+  applications Application[]
 }
 
 model Catalog {
@@ -123,4 +124,21 @@ enum PolicyIntent {
   PUBLIC // Openbaar toegankelijk (geen OPA-check nodig)
   RESTRICTED // Alleen voor bepaalde partijen (OPA regelt toegang via APISIX)
   INTERNAL // Alleen Fontys (niet publiceren via DCAT-AP)
+}
+
+model Application {
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "CitizenCity Mobility Dashboard"
+  description String? // Optional details
+  api_key     String   @unique @default(uuid()) // Or use a more secure random string
+  inbox_url   String // LDN inbox: https://app.example/ldn/inbox
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  is_active   Boolean  @default(true)
+
+  // Optional: link to internal user/org for ownership (if multi-tenant)
+  owner    User?   @relation(fields: [owner_id], references: [id])
+  owner_id String?
+
+  @@map("applications")
 }

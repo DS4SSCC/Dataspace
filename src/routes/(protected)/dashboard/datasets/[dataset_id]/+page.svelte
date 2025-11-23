@@ -10,6 +10,8 @@
     import Input from "$lib/client/components/form/Input.svelte"; // Assuming you have this
     import {getSectorFromThemeUriOrId} from "$lib/client/helpers/sector.helper.ts";
     import {marked} from "marked";
+    import Form from "$lib/client/components/form/Form.svelte";
+    import Modal from "$lib/client/components/Modal.svelte";
 
     let {data} = $props<{
         dataset: {
@@ -21,30 +23,29 @@
             modified?: string;
             theme?: string;
             spatial?: string;
-            temporalStart?: string;
-            temporalEnd?: string;
-            accessUrl?: string;
-            downloadUrl?: string;
-            mediaType?: string;
+            temporal_start?: string;
+            temporal_end?: string;
+            access_url?: string;
+            download_url?: string;
+            media_type?: string;
             license?: string;
-            accessRights?: string;
-            isPublished: boolean;
-            policyIntent: 'PUBLIC' | 'RESTRICTED' | 'INTERNAL';
+            access_rights?: string;
+            is_published: boolean;
+            policy_intent: 'PUBLIC' | 'RESTRICTED' | 'INTERNAL';
             notes?: string;
-            importedAt: string;
-            publishedAt?: string;
+            imported_at: string;
+            published_at?: string;
             catalog: {
                 title: string;
                 name: string;
-                apiStandard: string;
+                api_standard: string;
             }; // Include catalog info if available via join in repository
         };
     }>();
 
     // Example: Track local changes for illustrative policy settings (not saved in this prototype)
-    let localPolicyIntent = $state(data.dataset.policyIntent);
     let localNotes = $state(data.dataset.notes || '');
-    let localIsPublished = $state(data.dataset.isPublished);
+    let localIsPublished = $state(data.dataset.is_published);
 
     const currentSector = $derived.by(() => {
         try {
@@ -72,8 +73,8 @@
     // --- Illustrative Functions (Out of Scope for Prototype) ---
     function handlePolicyChange(event: Event) {
         const target = event.target as HTMLSelectElement;
-        localPolicyIntent = target.value as 'PUBLIC' | 'RESTRICTED' | 'INTERNAL';
-        console.log("Policy intent changed (not saved in prototype):", localPolicyIntent);
+        data.dataset.policy_intent = target.value as 'PUBLIC' | 'RESTRICTED' | 'INTERNAL';
+        console.log("Policy intent changed (not saved in prototype):", data.dataset.policy_intent);
         // In a full implementation, this would trigger an action like `?/updateDataset`
     }
 
@@ -116,7 +117,13 @@
         alert(`Viewing ODRL policy for dataset "${data.dataset.title}".\n\nExample ODRL Rule:\n${JSON.stringify(exampleODRL, null, 2)}`);
     }
 
-    // --- End Illustrative Functions ---
+    let editMode = $state({
+        description: false
+    })
+
+    let policyModal = $state({
+        show: false
+    })
 
 </script>
 
@@ -130,17 +137,38 @@
             <Button size="xs" variant={localIsPublished ? 'success' : 'secondary'}>
                 {localIsPublished ? 'Published in DCAT-AP' : 'Not published'}
             </Button>
-            <Button size="xs" variant={localPolicyIntent === 'PUBLIC' ? 'info' : 'warning'}>
-                Policy Intent: {localPolicyIntent}
+            <Button size="xs" variant={data.dataset.policy_intent === 'PUBLIC' ? 'info' : 'warning'}>
+                Policy Intent: {data.dataset.policy_intent}
             </Button>
         </Flexbox>
     </Section>
 
     <!-- Description -->
     <Section>
-        <SectionHeader title="Description"/>
+        <SectionHeader title="Description">
+            {#snippet suffix()}
+                {#if editMode.description}
+                    <Button form="description-form" type="submit">
+                        <Icon icon="floppy-fill"/>
+                    </Button>
+                {:else}
+                    <Button onclick={()=> editMode.description = !editMode.description}>
+                        <Icon icon="pencil-fill"/>
+                    </Button>
+                {/if}
+            {/snippet}
+        </SectionHeader>
         <Card>
-            {@html marked(data.dataset?.description || '<em>No description available.</em>')}
+            {#if editMode.description}
+                <Form action="?/update" id="description-form" onsuccess={()=> editMode.description = false}>
+                    <Input type="textarea" name="dataset.description" rows={12} value={data.dataset?.description}/>
+                </Form>
+            {:else}
+                <div class="description">
+                    {@html marked(data.dataset?.description || '<em>No description available.</em>')}
+                </div>
+            {/if}
+
         </Card>
     </Section>
 
@@ -150,7 +178,7 @@
         <Card>
             <dl style="display: grid; grid-template-columns: max-content 1fr; gap: 0.5rem 1rem; align-items: start;">
                 <dt><strong>Source Catalog:</strong></dt>
-                <dd>{data.dataset.catalog?.title || 'N/A'} ({data.dataset.catalog?.apiStandard || 'N/A'})</dd>
+                <dd>{data.dataset.catalog?.title || 'N/A'} ({data.dataset.catalog?.api_standard || 'N/A'})</dd>
 
                 <dt><strong>Dataset Identifier:</strong></dt>
                 <dd><code>{data.dataset.identifier}</code></dd>
@@ -158,9 +186,9 @@
                 <dt><strong>Imported:</strong></dt>
                 <dd>{formatDate(data.dataset.importedAt)}</dd>
 
-                {#if data.dataset.publishedAt}
+                {#if data.dataset.published_at}
                     <dt><strong>Published:</strong></dt>
-                    <dd>{formatDate(data.dataset.publishedAt)}</dd>
+                    <dd>{formatDate(data.dataset.published_at)}</dd>
                 {/if}
 
                 <dt><strong>Last modified:</strong></dt>
@@ -171,9 +199,9 @@
                     <dd><code>{data.dataset.license}</code></dd>
                 {/if}
 
-                {#if data.dataset.accessRights}
+                {#if data.dataset.access_rights}
                     <dt><strong>Access Rights:</strong></dt>
-                    <dd><code>{data.dataset.accessRights}</code></dd>
+                    <dd><code>{data.dataset.access_rights}</code></dd>
                 {/if}
 
                 {#if data.dataset.theme}
@@ -186,12 +214,12 @@
                     <dd><code>{data.dataset.spatial}</code></dd>
                 {/if}
 
-                {#if data.dataset.temporalStart || data.dataset.temporalEnd}
+                {#if data.dataset.temporalStart || data.dataset.temporal_end}
                     <dt><strong>Temporal Coverage:</strong></dt>
                     <dd>
-                        {data.dataset.temporalStart ? formatDate(data.dataset.temporalStart) : 'N/A'}
+                        {data.dataset.temporal_start ? formatDate(data.dataset.temporal_start) : 'N/A'}
                         —
-                        {data.dataset.temporalEnd ? formatDate(data.dataset.temporalEnd) : 'N/A'}
+                        {data.dataset.temporal_end ? formatDate(data.dataset.temporal_end) : 'N/A'}
                     </dd>
                 {/if}
             </dl>
@@ -201,73 +229,51 @@
     <!-- Access Links -->
     <Section>
         <SectionHeader title="Access"/>
-        <Flexbox gap="1rem" wrap>
-            {#if data.dataset.accessUrl}
-                <Button size="sm" onclick={() => openUrl(data.dataset.accessUrl)}>
+        <Card style="margin-bottom: 1rem">
+            <Flexbox direction="column" gap="1rem">
+                <!-- Policy Intent Selector -->
+                <Form action="?/update">
+                    {#snippet children({form})}
+                        <Input type="select" label="Policy Intent"
+                               name="dataset.policy_intent"
+                               onchange={() => form.requestSubmit()}
+                               options={[
+                                { value: 'PUBLIC', label: 'Public (no access control)', selected: data.dataset.policy_intent === 'PUBLIC' },
+                                { value: 'RESTRICTED', label: 'Restricted (OPA-controlled)', selected: data.dataset.policy_intent === 'RESTRICTED' },
+                                { value: 'INTERNAL', label: 'Internal (not published)', selected: data.dataset.policy_intent === 'INTERNAL' }
+                           ]}
+                        />
+                    {/snippet}
+                </Form>
+                {#if data.dataset.policy_intent === 'RESTRICTED'}
+                    <!-- View/Edit ODRL Rule Button -->
+                    <Button variant="secondary" size="sm" onclick={()=> policyModal.show = true}>
+                        <Icon icon="pencil-square" margin="right"/>
+                        View/Edit ODRL Policy Rule (Demo)
+                    </Button>
+                {/if}
+            </Flexbox>
+        </Card>
+        <Flexbox gap=".5rem">
+            {#if data.dataset.access_url}
+                <Button size="sm" onclick={() => openUrl(data.dataset.access_url)}>
                     <Icon icon="link-45deg" margin="right"/>
                     API Endpoint
                 </Button>
             {/if}
-            {#if data.dataset.downloadUrl}
-                <Button size="sm" onclick={() => openUrl(data.dataset.downloadUrl)}>
+            {#if data.dataset.download_url}
+                <Button size="sm" onclick={() => openUrl(data.dataset.download_url)}>
                     <Icon icon="download" margin="right"/>
                     Download ({data.dataset.mediaType || 'data'})
                 </Button>
             {/if}
-            {#if data.dataset.policyIntent !== 'PUBLIC'}
+            {#if data.dataset.policy_intent !== 'PUBLIC'}
                 <Button size="sm" onclick={handleAccessRequest}>
                     <Icon icon="key" margin="right"/>
                     Request Access
                 </Button>
             {/if}
         </Flexbox>
-    </Section>
-
-    <!-- Illustrative Policy & Management Section -->
-    <Section>
-        <SectionHeader title="Dataset Management"/>
-        <Card>
-            <Flexbox direction="column" gap="1rem">
-                <!-- Policy Intent Selector -->
-                <Input
-                        id="policy-intent-select"
-                        type="select"
-                        label="Policy Intent"
-                        value={localPolicyIntent}
-                        options={[
-              { value: 'PUBLIC', label: 'Public (no access control)' },
-              { value: 'RESTRICTED', label: 'Restricted (OPA-controlled)' },
-              { value: 'INTERNAL', label: 'Internal (not published)' }
-            ]}
-                        onchange={handlePolicyChange}
-                />
-
-                <!-- View/Edit ODRL Rule Button -->
-                <Button variant="secondary" size="sm" onclick={handleODRLRuleView}>
-                    <Icon icon="pencil-square" margin="right"/>
-                    View/Edit ODRL Policy Rule (Demo)
-                </Button>
-
-                <!-- Published Toggle -->
-                <Input
-                        id="publish-toggle"
-                        type="checkbox"
-                        checked={localIsPublished}
-                        onchange={handlePublishToggle}
-                        label="Include in DCAT-AP Feed"
-                />
-
-                <!-- Notes -->
-                <Input
-                        id="notes-textarea"
-                        type="textarea"
-                        value={localNotes}
-                        onchange={handleNotesChange}
-                        label="Internal Notes"
-                        placeholder="Add internal notes about this dataset..."
-                />
-            </Flexbox>
-        </Card>
     </Section>
 
     <!-- Debug (optional – remove in production) -->
@@ -278,3 +284,24 @@
     </Section>
     -->
 </Page>
+
+
+<Modal title="Policy Rule" bind:show={policyModal.show}>
+    TODO
+</Modal>
+
+<style lang="scss">
+  .description {
+    color: var(--color-text-secondary);
+    text-align: left;
+
+    :global(*) {
+      font-style: inherit !important;
+      font-family: inherit !important;
+      background: none !important;
+      font-weight: inherit !important;
+      text-align: inherit !important;
+      font-size: small !important;
+    }
+  }
+</style>

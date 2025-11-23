@@ -41,12 +41,12 @@ export const actions: Actions = {
         }
 
         const title = form.string$('catalog.title');
-        const newName = titleToName(title); // Genereer nieuwe 'name' op basis van de bijgewerkte titel
+        const name = titleToName(title); // Genereer nieuwe 'name' op basis van de bijgewerkte titel
         const description = form.string$('catalog.description');
-        const apiStandard = form.string$('catalog.apiStandard');
-        const apiUrl = form.string$('catalog.apiUrl');
-        const apiKey = form.string('catalog.apiKey');
-        const isActive = form.boolean$('catalog.isActive');
+        const api_standard = form.string$('catalog.apiStandard');
+        const api_url = form.string$('catalog.apiUrl');
+        const api_key = form.string('catalog.apiKey');
+        const is_active = form.boolean$('catalog.isActive');
 
         // Validatie (optioneel)
         const allowedApiStandards = [
@@ -62,29 +62,29 @@ export const actions: Actions = {
             'aws_data_exchange'
         ];
 
-        if (!allowedApiStandards.includes(apiStandard)) {
+        if (!allowedApiStandards.includes(api_standard)) {
             return fail(400, { message: "Invalid API standard." });
         }
 
         // Controleer of de nieuwe 'name' uniek is, maar niet conflicteert met de huidige catalogus zelf
-        if (newName !== existingCatalog.name) { // Alleen checken als de naam daadwerkelijk verandert
-            const conflictingCatalog = await CatalogRepository.getByName(newName);
+        if (name !== existingCatalog.name) { // Alleen checken als de naam daadwerkelijk verandert
+            const conflictingCatalog = await CatalogRepository.getByName(name);
             if (conflictingCatalog && conflictingCatalog.id !== catalog_id) { // Controleer of het conflicterende item een ANDERE catalogus is
                 return fail(409, {
-                    message: `A catalog with a similar title (resulting in name '${newName}') already exists. Please choose a different title.`
+                    message: `A catalog with a similar title (resulting in name '${name}') already exists. Please choose a different title.`
                 });
             }
         }
 
         // Update de catalogus in de database
         const updatedCatalog = await CatalogRepository.update(catalog_id, {
-            name: newName, // Gebruik de nieuwe gegenereerde naam
+            name, // Gebruik de nieuwe gegenereerde naam
             title,
             description,
-            apiStandard,
-            apiUrl,
-            apiKey,
-            isActive
+            api_standard,
+            api_url,
+            api_key,
+            is_active
         });
 
         // Redirect naar de detailpagina van de bijgewerkte catalogus of naar het overzicht
@@ -137,13 +137,13 @@ export const actions: Actions = {
             return fail(400, { message: "Catalog ID is required." });
         }
 
-        const datasetIdentifier = form.string$('dataset.identifier');
-        const isPublished = form.boolean('dataset.isPublished') ?? false;
-        const policyIntent = form.string('dataset.policyIntent') ?? 'PUBLIC';
+        const dataset_identifier = form.string$('dataset.identifier');
+        const is_published = form.boolean('dataset.isPublished') ?? false;
+        const policy_intent = form.string('dataset.policyIntent') ?? 'PUBLIC';
 
         // Optional: validate policyIntent
         const validPolicies = ['PUBLIC', 'RESTRICTED', 'INTERNAL'];
-        if (!validPolicies.includes(policyIntent)) {
+        if (!validPolicies.includes(policy_intent)) {
             return fail(400, { message: "Invalid policy intent." });
         }
 
@@ -155,7 +155,7 @@ export const actions: Actions = {
 
         // Fetch the full dataset metadata from the external source (via adapter)
         const dcatDatasets = await CatalogRepository.getDatasetsFromCatalog(catalog_id);
-        const selectedDataset = dcatDatasets.find(ds => ds.id === datasetIdentifier);
+        const selectedDataset = dcatDatasets.find(ds => ds.id === dataset_identifier);
 
         if (!selectedDataset) {
             return fail(404, { message: "Dataset not found in catalog." });
@@ -163,7 +163,7 @@ export const actions: Actions = {
 
         // Map to Prisma-compatible data
         const datasetData = {
-            catalogId: catalog.id,
+            catalog_id: catalog.id,
             title: selectedDataset.title,
             description: selectedDataset.description || '',
             identifier: selectedDataset.id,
@@ -172,15 +172,15 @@ export const actions: Actions = {
             language: null, // extend if your adapter provides it
             theme: selectedDataset.themes?.[0] || null,
             spatial: null,
-            temporalStart: null,
-            temporalEnd: null,
+            temporal_start: null,
+            temporal_end: null,
             license: selectedDataset.license?.id || null,
-            accessRights: null, // or map from accessRights.id
-            accessUrl: selectedDataset.distributions?.find(d => d.accessUrl)?.accessUrl || null,
-            downloadUrl: selectedDataset.distributions?.find(d => d.downloadUrl)?.downloadUrl || null,
-            mediaType: selectedDataset.distributions?.[0]?.mediaType || null,
-            isPublished,
-            policyIntent: policyIntent as any, // Prisma enum
+            access_rights: null, // or map from accessRights.id
+            access_url: selectedDataset.distributions?.find(d => d.accessUrl)?.accessUrl || null,
+            download_url: selectedDataset.distributions?.find(d => d.downloadUrl)?.downloadUrl || null,
+            media_type: selectedDataset.distributions?.[0]?.mediaType || null,
+            is_published,
+            policy_intent: policy_intent as any, // Prisma enum
             notes: null
         };
 

@@ -86,7 +86,7 @@
                     <Icon icon="pencil-fill" margin="right"/>
                     Edit
                 </Button>
-                <Button variant={data.catalog.isActive ? 'success' : 'danger'}>{data.catalog.isActive ? 'Active' : 'Inactive'}</Button>
+                <Button variant={data.catalog.is_active ? 'success' : 'danger'}>{data.catalog.is_active ? 'Active' : 'Inactive'}</Button>
             </Flexbox>
         </Flexbox>
     </Section>
@@ -225,9 +225,9 @@
           { "value": "aws_data_exchange", "label": "AWS Data Exchange API" }
         ]}></Input>
         <Input required type="text" label="API endpoint" name="catalog.apiUrl" placeholder="https://api.example.com"
-               value={data.catalog.apiUrl}/>
-        <Input type="text" label="API Key" name="catalog.apiKey" placeholder="*********" value={data.catalog.apiKey}/>
-        <Input type="checkbox" label="Active" name="catalog.isActive" value={data.catalog.isActive}/>
+               value={data.catalog.api_url}/>
+        <Input type="text" label="API Key" name="catalog.apiKey" placeholder="*********" value={data.catalog.api_key}/>
+        <Input type="checkbox" label="Active" name="catalog.isActive" value={data.catalog.is_active}/>
         <Flexbox justify="flex-end">
             <Button transparent onclick={()=> editCatalogModal.show = false}>Close</Button>
             <Button variant="primary" type="submit">

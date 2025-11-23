@@ -137,7 +137,7 @@
                 {#if catalog.name}
                     <Tooltip text={catalog.title}>
                         <img
-                                src={catalog.logoUrl}
+                                src={catalog.logo_url}
                                 height="20px"
                                 alt="Logo van {catalog.title}"
                                 onerror={(event) => (event.target as HTMLImageElement).style.display = 'none'}

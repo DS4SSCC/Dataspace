@@ -3,18 +3,13 @@ import type { Catalog } from '@prisma/client';
 import {OpenDataSoftAdapter} from "$lib/server/adapters/opendatasoft";
 import {CkanAdapter, type DcatApDataset} from "$lib/server/adapters/ckan"; // Zorg ervoor dat dit type beschikbaar is
 
-// Type definitie voor het aanmaken van een catalogus (zonder id, createdAt, updatedAt)
-type CreateCatalogData = Omit<Catalog, 'id' | 'createdAt' | 'updatedAt' | 'lastSync'>;
-// Type definitie voor het updaten van een catalogus (alle velden optioneel)
-type UpdateCatalogData = Partial<Omit<Catalog, 'id' | 'createdAt' | 'updatedAt'>>;
-
 export const CatalogRepository = {
     /**
      * Maakt een nieuwe catalogus aan in de database.
      * @param data - De gegevens voor de nieuwe catalogus.
      * @returns De aangemaakte Catalog record.
      */
-    create: (data: CreateCatalogData): Promise<Catalog> =>
+    create: (data: any): Promise<Catalog> =>
         prisma.catalog.create({
             data
         }),
@@ -56,7 +51,7 @@ export const CatalogRepository = {
      * @param data - De gegevens om bij te werken.
      * @returns De bijgewerkte Catalog record.
      */
-    update: (id: string, data: UpdateCatalogData): Promise<Catalog> =>
+    update: (id: string, data: any): Promise<Catalog> =>
         prisma.catalog.update({
             where: {
                 id
@@ -107,15 +102,15 @@ export const CatalogRepository = {
 
         // 2. Kies de juiste adapter op basis van apiStandard
         let adapter;
-        switch (catalog.apiStandard) {
+        switch (catalog.api_standard) {
             case 'opendatasoft_explore_v2':
-                adapter = new OpenDataSoftAdapter(catalog.apiUrl, catalog.apiKey);
+                adapter = new OpenDataSoftAdapter(catalog.api_url, catalog.api_key ?? undefined);
                 break;
             case 'ckan_api_v3':
-                adapter = new CkanAdapter(catalog.apiUrl, catalog.apiKey);
+                adapter = new CkanAdapter(catalog.api_url, catalog.api_key ?? undefined);
                 break;
             default:
-                throw new Error(`Unsupported API standard: ${catalog.apiStandard}`);
+                throw new Error(`Unsupported API standard: ${catalog.api_standard}`);
         }
 
         // 3. Gebruik de adapter om datasets op te halen en te converteren
@@ -124,9 +119,9 @@ export const CatalogRepository = {
             // Bijv. getDatasets() voor zowel ODS als CKAN (aangepast indien nodig)
             // Dit voorbeeld gebruikt de methode zoals gedefinieerd in de adapters
             let rawData;
-            if (catalog.apiStandard === 'opendatasoft_explore_v2') {
+            if (catalog.api_standard === 'opendatasoft_explore_v2') {
                 rawData = await (adapter as OpenDataSoftAdapter).getDatasets(); // Type assertie voor specifieke methode
-            } else if (catalog.apiStandard === 'ckan_api_v3') {
+            } else if (catalog.api_standard === 'ckan_api_v3') {
                 rawData = await (adapter as CkanAdapter).getDatasets(); // Type assertie voor specifieke methode
             }
 
@@ -136,7 +131,7 @@ export const CatalogRepository = {
             // Optioneel: update de lastSync datum in de database
             await prisma.catalog.update({
                 where: { id: catalogId },
-                data: { lastSync: new Date() }
+                data: { last_sync: new Date() }
             });
 
             return dcatApDatasets;

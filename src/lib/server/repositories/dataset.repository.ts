@@ -21,117 +21,16 @@ type UpdatePublishSettings = {
 
 export const DatasetRepository = {
     /**
-     * Importeert datasets van een externe catalogus (via adapter) en slaat de metadata op.
-     * Bestaande datasets (zelfde catalogId + identifier) worden bijgewerkt.
-     * @param catalogId - ID van de lokale catalogus
-     * @returns Aantal geïmporteerde/bijgewerkte datasets
-     */
-    async importFromCatalog(catalogId: string): Promise<number> {
-        // 1. Haal DCAT-AP datasets op via de catalog repository (gebruikt jouw bestaande adapter-logica)
-        const dcatDatasets = await CatalogRepository.getDatasetsFromCatalog(catalogId);
-
-        if (!dcatDatasets.length) return 0;
-
-        // 2. Transformeer naar Prisma-compatible data
-        const importData: ImportDatasetData[] = dcatDatasets.map(ds => ({
-            catalogId,
-            title: ds.title,
-            description: ds.description || '',
-            identifier: ds.id,
-            issued: ds.issued ? new Date(ds.issued) : null,
-            modified: ds.modified ? new Date(ds.modified) : null,
-            language: ds.language || null,
-            theme: ds.themes?.[0] || null, // neem eerste theme (Prisma ondersteunt nu 1 string)
-            spatial: ds.spatial || null,
-            temporalStart: ds.temporalStart ? new Date(ds.temporalStart) : null,
-            temporalEnd: ds.temporalEnd ? new Date(ds.temporalEnd) : null,
-            license: ds.license?.id || null,
-            accessRights: ds.accessRights?.id || null,
-            accessUrl: ds.distributions?.find(d => d.accessUrl)?.accessUrl || null,
-            downloadUrl: ds.distributions?.find(d => d.downloadUrl)?.downloadUrl || null,
-            mediaType: ds.distributions?.[0]?.mediaType || null,
-            isPublished: false, // standaard niet publiceren
-            policyIntent: 'PUBLIC', // standaard openbaar (kan later aangepast worden)
-            notes: null
-        }));
-
-        // 3. Upsert in database (update als identifier + catalogId al bestaat)
-        const upsertPromises = importData.map(data =>
-            prisma.dataset.upsert({
-                where: {
-                    catalogId_identifier: {
-                        catalogId: data.catalogId,
-                        identifier: data.identifier
-                    }
-                },
-                create: data,
-                update: {
-                    title: data.title,
-                    description: data.description,
-                    modified: data.modified,
-                    theme: data.theme,
-                    accessUrl: data.accessUrl,
-                    // ... voeg hier andere velden toe die je wilt bijwerken bij sync
-                }
-            })
-        );
-
-        await Promise.all(upsertPromises);
-        return importData.length;
-    },
-
-    /**
      * Haalt alle datasets op die gekoppeld zijn aan een specifieke catalogus.
      */
-    getByCatalogId: (catalogId: string): Promise<Dataset[]> =>
+    getByCatalogId: (catalog_id: string): Promise<Dataset[]> =>
         prisma.dataset.findMany({
-            where: {catalogId},
+            where: {catalog_id},
             include: {
                 catalog: true
             },
             orderBy: {title: 'asc'}
         }),
-
-    /**
-     * Haalt één dataset op via catalogus + identifier.
-     */
-    getByCatalogAndIdentifier: (
-        catalogId: string,
-        identifier: string
-    ): Promise<Dataset | null> =>
-        prisma.dataset.findUnique({
-            where: {
-                catalogId_identifier: {catalogId, identifier}
-            }
-        }),
-
-    /**
-     * Update publicatie-instellingen van een dataset (bijv. via UI).
-     */
-    updatePublishSettings: (
-        id: string,
-        data: UpdatePublishSettings
-    ): Promise<Dataset> =>
-        prisma.dataset.update({
-            where: {id},
-            data: {
-                ...data,
-                publishedAt:
-                    data.isPublished === true
-                        ? new Date() // zet publishedAt alleen bij eerste publicatie
-                        : undefined
-            }
-        }),
-
-    /**
-     * Haalt alle datasets op die GEPUBLICEERD zijn (voor DCAT-AP feed).
-     */
-    getPublishedDatasets: (): Promise<Dataset[]> =>
-        prisma.dataset.findMany({
-            where: {isPublished: true},
-            include: {catalog: true} // inclusief catalog info voor publisher
-        }),
-
     /**
      * Creëert een nieuwe dataset handmatig (bijv. voor eigen sandbox-data zoals "Inzicht Verlicht").
      * Gebruik dit voor datasets die NIET afkomstig zijn uit een externe catalogus.

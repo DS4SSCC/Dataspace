@@ -16,12 +16,12 @@ export const actions: Actions = {
         const { guard: { form } } = event;
 
         const title = form.string$('catalog.title');
-        const nameFromTitle = titleToName(title);
+        const name = titleToName(title);
         const description = form.string$('catalog.description');
-        const apiStandard = form.string$('catalog.apiStandard');
-        const apiUrl = form.string$('catalog.apiUrl');
-        const apiKey = form.string$('catalog.apiKey', true);
-        const isActive = form.boolean$('catalog.isActive', true);
+        const api_standard = form.string$('catalog.apiStandard');
+        const api_url = form.string$('catalog.apiUrl');
+        const api_key = form.string$('catalog.apiKey');
+        const is_active = form.boolean$('catalog.isActive');
 
         // Validatie (optioneel)
         const allowedApiStandards = [
@@ -37,28 +37,28 @@ export const actions: Actions = {
             'aws_data_exchange'
         ];
 
-        if (!allowedApiStandards.includes(apiStandard)) {
+        if (!allowedApiStandards.includes(api_standard)) {
             return fail(400, { message: "Invalid API standard." });
         }
 
         // Controleer of een catalogus met deze gegenereerde 'name' al bestaat
-        const existingCatalog = await CatalogRepository.getByName(nameFromTitle);
+        const existingCatalog = await CatalogRepository.getByName(name);
         if (existingCatalog) {
             // Als deze bestaat, geef een foutmelding terug
             return fail(409, {
-                message: `A catalog with a similar title (resulting in name '${nameFromTitle}') already exists. Please choose a different title.`
+                message: `A catalog with a similar title (resulting in name '${name}') already exists. Please choose a different title.`
             });
         }
 
         // Als de naam uniek is, voeg de catalogus toe
         const newCatalog = await CatalogRepository.create({
-            name: nameFromTitle,
+            name,
             title,
             description,
-            apiStandard,
-            apiUrl,
-            apiKey,
-            isActive
+            api_standard,
+            api_url,
+            api_key,
+            is_active
         });
 
         // Redirect na succesvolle creatie

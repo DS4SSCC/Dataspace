@@ -18,7 +18,7 @@
             <NavbarItem href="/dashboard/catalogs">Catalogs</NavbarItem>
             <NavbarItem href="/dashboard/datasets">Datasets</NavbarItem>
             <NavbarItem href="/dashboard/requests">Requests</NavbarItem>
-            <NavbarItem href="/dashboard/api">API</NavbarItem>
+            <NavbarItem href="/dashboard/applications">Applications</NavbarItem>
             <NavbarItem href="/dashboard/account">Account</NavbarItem>
         </div>
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
