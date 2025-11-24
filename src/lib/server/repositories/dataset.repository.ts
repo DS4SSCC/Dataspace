@@ -42,7 +42,7 @@ export const DatasetRepository = {
             data: {
                 ...data,
                 // Zorg dat publishedAt alleen wordt gezet als direct gepubliceerd
-                publishedAt: data.isPublished ? new Date() : undefined
+                published_at: data.is_published ? new Date() : undefined
             }
         }),
 
@@ -58,12 +58,12 @@ export const DatasetRepository = {
             data: {
                 ...data,
                 // Zet publishedAt alleen de eerste keer dat isPublished true wordt
-                publishedAt:
-                    data.isPublished === true
+                published_at:
+                    data.is_published === true
                         ? // Haal bestaande waarde op om te checken of al gepubliceerd
                         prisma.dataset
                             .findUnique({where: {id}})
-                            .then(ds => ds?.publishedAt || new Date())
+                            .then(ds => ds?.is_published || new Date())
                         : undefined
             }
         }),

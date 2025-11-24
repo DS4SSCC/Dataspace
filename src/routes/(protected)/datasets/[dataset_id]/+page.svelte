@@ -8,7 +8,6 @@
     import {marked} from "marked";
     import Property from "$lib/client/components/Property.svelte";
     import Card from "$lib/client/components/Card.svelte";
-    import SectionHeader from "$lib/client/components/SectionHeader.svelte";
     import Icon from "$lib/client/components/icons/Icon.svelte";
 
     let {data} = $props();
@@ -22,17 +21,17 @@
             {#if currentSector}
                 <SectorButton sector={currentSector} size="xs"/>
             {/if}
-            <Button size="xs" variant={data.dataset?.isPublished ? 'success' : 'secondary'}>
-                {data.dataset?.isPublished ? 'Published in DCAT-AP' : 'Not published'}
+            <Button size="xs" variant={data.dataset?.is_published ? 'success' : 'secondary'}>
+                {data.dataset?.is_published ? 'Published in DCAT-AP' : 'Not published'}
             </Button>
-            <Button size="xs" variant={data.dataset?.policyIntent === 'PUBLIC' ? 'info' : 'warning'}>
-                Policy Intent: {data.dataset?.policyIntent}
+            <Button size="xs" variant={data.dataset?.policy_intent === 'PUBLIC' ? 'info' : 'warning'}>
+                Policy Intent: {data.dataset?.policy_intent}
             </Button>
         </Flexbox>
     {/snippet}
     {#snippet suffix()}
-        {#if data.dataset?.policyIntent === 'PUBLIC'}
-            <Button href={data.dataset.downloadUrl ?? ''}><Icon icon="download"/></Button>
+        {#if data.dataset?.policy_intent === 'PUBLIC'}
+            <Button href={data.dataset.download_url ?? ''}><Icon icon="download"/></Button>
         {/if}
     {/snippet}
     <Section>
@@ -44,8 +43,8 @@
     </Section>
     <Section>
         <Card>
-            <Property key="Imported" value={data.dataset?.importedAt.toLocaleString()}/>
-            {#if data.dataset?.publishedAt}<Property key="Published" value={data.dataset?.publishedAt?.toLocaleString()}/>{/if}
+            <Property key="Imported" value={data.dataset?.imported_at.toLocaleString()}/>
+            {#if data.dataset?.published_at}<Property key="Published" value={data.dataset?.published_at?.toLocaleString()}/>{/if}
         </Card>
     </Section>
     <pre>{JSON.stringify(data, null, 2)}</pre>

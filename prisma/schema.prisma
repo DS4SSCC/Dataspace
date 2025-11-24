@@ -89,9 +89,10 @@ model Dataset {
   notes         String? // Interne notities (bijv. "Gebruikt in Inzicht Verlicht")
 
   // 🕒 Tijdsaanduidingen
-  imported_at      DateTime          @default(now()) // Wanneer metadata geïmporteerd is
-  published_at     DateTime? // Wanneer voor het eerst gepubliceerd in jouw feed
-  ldn_notification LDNNotification[]
+  imported_at       DateTime          @default(now()) // Wanneer metadata geïmporteerd is
+  published_at      DateTime? // Wanneer voor het eerst gepubliceerd in jouw feed
+  ldn_notifications LDNNotification[]
+  ldes_events       LDESEvent[]
 
   @@unique([catalog_id, identifier]) // Zorg dat dezelfde dataset niet dubbel wordt geïmporteerd
   @@map("datasets")
@@ -128,17 +129,35 @@ enum PolicyIntent {
 
 model Application {
   id          String   @id @default(cuid())
-  name        String   @unique // e.g., "CitizenCity Mobility Dashboard"
+  name        String
   description String? // Optional details
   api_key     String   @unique @default(uuid()) // Or use a more secure random string
-  inbox_url   String // LDN inbox: https://app.example/ldn/inbox
+  inbox_url   String? // LDN inbox: https://app.example/ldn/inbox
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
   is_active   Boolean  @default(true)
 
   // Optional: link to internal user/org for ownership (if multi-tenant)
-  owner    User?   @relation(fields: [owner_id], references: [id])
-  owner_id String?
+  owner    User   @relation(fields: [owner_id], references: [id])
+  owner_id String
 
   @@map("applications")
+}
+
+model LDESEvent {
+  id         String  @id @default(cuid())
+  dataset_id String
+  dataset    Dataset @relation(fields: [dataset_id], references: [id], onDelete: Cascade)
+
+  // LDES core fields
+  event_type String // e.g., "DatasetPublished", "DatasetUpdated"
+  event_data Json // Full or partial DCAT dataset snapshot (JSON-LD)
+  timestamp  DateTime @default(now())
+
+  // LDES versioning & immutability
+  version_of String? // URI of the dataset (e.g., "https://your-dataspace.example/datasets/abc123")
+  previous   String? // URI of previous event (for chaining)
+
+  @@index([timestamp])
+  @@map("ldes_events")
 }

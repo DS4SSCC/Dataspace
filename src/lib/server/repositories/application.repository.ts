@@ -1,13 +1,31 @@
 import { prisma } from '$lib/server/configurations/prisma.config';
 import type { Application } from '@prisma/client';
+import {randomUUID} from "node:crypto";
 
 export const ApplicationRepository = {
     /**
      * Creates a new application (e.g. external consumer) with an API key and inbox.
      */
-    create: (data: any): Promise<Application> =>
+    create: (data: {
+        name: string
+        description: string,
+        inbox_url: string,
+        api_key: string
+        owner: {
+            id: string
+        }}) =>
         prisma.application.create({
-            data
+            data:{
+                name: data.name,
+                description: data.description,
+                inbox_url: data.inbox_url,
+                api_key: data.api_key,
+                owner: {
+                    connect: {
+                        id: data.owner.id
+                    }
+                }
+            }
         }),
 
     /**

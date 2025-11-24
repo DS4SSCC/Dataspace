@@ -7,7 +7,7 @@ import {SessionGuard} from "$lib/server/guards/session.guard";
 
 export const load = Guard.load(
     async ({guard: {session}}) => ({
-        application: await ApplicationRepository.getAllFromUser(session.user.id)
+        applications: await ApplicationRepository.getAllFromUser(session.user.id)
     }),
     SessionGuard.ensure
 )
@@ -15,7 +15,7 @@ export const load = Guard.load(
 
 export const actions: Actions = {
     create: Guard.action(async (event) => {
-        const {guard: {form}} = event;
+        const {guard: {form, session}} = event;
 
         const name = form.string$('application.name');
         const description = form.string$('application.description');
@@ -41,15 +41,17 @@ export const actions: Actions = {
             });
         }
 
+
         // Create the application
         const app = await ApplicationRepository.create({
             name,
             description,
             inbox_url: parsedUrl.href, // normalize URL
-            api_key: randomUUID()
+            api_key: randomUUID(),
+            owner: session.user
         });
 
         // Redirect to detail page or list
         redirect(303, `/dashboard/applications/${app.id}`);
-    }, form.guard)
+    }, form.guard, SessionGuard.ensure),
 }

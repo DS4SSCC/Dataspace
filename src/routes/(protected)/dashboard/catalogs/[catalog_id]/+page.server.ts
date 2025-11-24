@@ -4,6 +4,10 @@ import {form} from "$lib/server/helpers/form.helper";
 import {type Actions, fail, redirect} from "@sveltejs/kit";
 import {titleToName} from "$lib/server/helpers/string.helper";
 import {DatasetRepository} from "$lib/server/repositories/dataset.repository";
+import {LDESEventRepository} from "$lib/server/repositories/ldes.repository";
+import {LdnRepository} from "$lib/server/repositories/ldn.repository";
+import {randomUUID} from "node:crypto";
+import {PUBLIC_BASE_URL} from "$env/static/public"
 
 export const load = Guard.load(async ({ locals, params: { catalog_id } }) => {
     const catalog = await CatalogRepository.getById(catalog_id);
@@ -185,7 +189,51 @@ export const actions: Actions = {
         };
 
         try {
-            await DatasetRepository.create(datasetData);
+            const newDataset = await DatasetRepository.create(datasetData);
+
+            if (is_published){
+                const notification = {
+                    '@context': 'https://www.w3.org/ns/ldn-context.jsonld',
+                    id: `urn:notification:${randomUUID()}`,
+                    type: 'Notification',
+                    published: new Date().toISOString(),
+                    actor: {
+                        id: PUBLIC_BASE_URL,
+                        type: 'Application',
+                        name: 'Your Dataspace'
+                    },
+                    object: {
+                        '@id': `${PUBLIC_BASE_URL}/datasets/${newDataset.id}`,
+                        '@type': 'dcat:Dataset',
+                        'dct:title': newDataset.title
+                    },
+                    summary: `Dataset "${newDataset.title}" has been published.`
+                };
+
+                await LDESEventRepository.create({
+                    dataset: newDataset,
+                    event_type: 'DatasetPublished',
+                    version_of: `${PUBLIC_BASE_URL}/datasets/${newDataset.id}`,
+                    event_data: {
+                        '@context': [
+                            'https://www.w3.org/ns/dcat.jsonld',
+                            'https://w3c.github.io/ldes/context.jsonld'
+                        ],
+                        '@id': `${PUBLIC_BASE_URL}/datasets/${newDataset.id}`,
+                        '@type': 'dcat:Dataset',
+                        'dct:title': newDataset.title,
+                        'dct:description': newDataset.description,
+                        'dct:identifier': newDataset.identifier,
+                        'dcat:theme': newDataset.theme,
+                        'dct:license': newDataset.license,
+                        'dcat:accessURL': newDataset.access_url,
+                        // Add other DCAT fields as needed
+                        'dct:issued': newDataset.issued?.toISOString(),
+                        'dct:modified': newDataset.modified?.toISOString()
+                    }
+                });
+                await LdnRepository.broadcast(newDataset.id, notification, 'Published');
+            }
         } catch (err) {
             console.error("Import failed:", err);
             return fail(500, { message: "Failed to import dataset." });

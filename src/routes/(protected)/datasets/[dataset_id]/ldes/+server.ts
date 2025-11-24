@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import {LdnRepository} from "$lib/server/repositories/ldn.repository";
 
 export const POST: RequestHandler = async ({ params, request }) => {
     const datasetId = params.dataset_id;
@@ -16,15 +17,14 @@ export const POST: RequestHandler = async ({ params, request }) => {
     }, { status: 201 });
 };
 
-export const GET: RequestHandler = async ({ params }) => {
-    const inboxId = params.dataset_id;
+export const GET: RequestHandler = async ({ params: {dataset_id} }) => {
 
     // Return the LDN inbox contents
-    const notifications = []//await getNotifications(inboxId);
+    const notifications = await LdnRepository.getByDatasetId(dataset_id)
 
     return json({
         '@context': 'https://www.w3.org/ns/ldn',
-        id: `/ldn/${inboxId}`,
+        id: `/datasets/${dataset_id}/ldes`,
         type: 'ldp:BasicContainer',
         'ldp:contains': notifications
     });
