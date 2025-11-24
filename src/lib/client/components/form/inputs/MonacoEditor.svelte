@@ -362,6 +362,7 @@
 	<div
 		class="container"
 		bind:this={element}
+        {...restProps}
 	></div>
 {:else}
 	<div class="hidden-editor-placeholder">

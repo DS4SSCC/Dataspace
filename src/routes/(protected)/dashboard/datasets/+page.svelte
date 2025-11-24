@@ -27,9 +27,9 @@
                 title: string;
             }; // If joined in repository
             isPublished: boolean;
-            policyIntent: 'PUBLIC' | 'RESTRICTED' | 'INTERNAL';
-            importedAt: string; // ISO date string
-            publishedAt?: string; // ISO date string
+            policy_intent: 'PUBLIC' | 'RESTRICTED' | 'INTERNAL';
+            imported_at: string; // ISO date string
+            published_at?: string; // ISO date string
             // Add other fields if needed later
         }>;
     }>();
@@ -37,21 +37,21 @@
     // Filters (initially empty)
     let searchTerm = $state('');
     let filterAccess = $state('all'); // 'all', 'PUBLIC', 'RESTRICTED', 'INTERNAL'
-    let sortBy = $state('title'); // 'title', 'importedAt'
+    let sortBy = $state('title'); // 'title', 'imported_at'
 
     // Derived filtered and sorted datasets
     let filteredDatasets = $derived.by(() => {
         let result = data.datasets.filter(dataset => {
             const matchesSearch = dataset.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 dataset.description.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesAccess = filterAccess === 'all' || dataset.policyIntent === filterAccess;
+            const matchesAccess = filterAccess === 'all' || dataset.policy_intent === filterAccess;
             return matchesSearch && matchesAccess;
         });
 
         // Sort
         result.sort((a, b) => {
             if (sortBy === 'title') return a.title.localeCompare(b.title);
-            if (sortBy === 'importedAt') return new Date(b.importedAt).getTime() - new Date(a.importedAt).getTime();
+            if (sortBy === 'imported_at') return new Date(b.imported_at).getTime() - new Date(a.imported_at).getTime();
             // Add other sort options if needed
             return 0;
         });
@@ -74,20 +74,6 @@
         if (policy === 'PUBLIC') return 'success';
         if (policy === 'RESTRICTED') return 'warning';
         return 'secondary'; // INTERNAL or unknown
-    }
-
-    // Helper function to confirm deletion before submitting the form
-    async function confirmAndSubmit(event: SubmitEvent, datasetTitle: string) {
-        const formElement = event.currentTarget as HTMLFormElement;
-        if (confirm(`Are you sure you want to delete the dataset "${datasetTitle}"? This action cannot be undone.`)) {
-            // Proceed with the form submission
-            // The form's action="?/deleteDataset" will handle the submission
-            // No need to call formElement.requestSubmit() explicitly here
-            // as the default form submission will occur if confirm is true.
-        } else {
-            // Prevent the form from submitting if the user cancels
-            event.preventDefault();
-        }
     }
 
     setContext("sectors", data.sectors);
@@ -135,7 +121,7 @@
                         --border="none"
                         options={[
                         {label: "Sort by Name", value: 'title'},
-                        {label: "Imported Date", value: 'importedAt'}
+                        {label: "Imported Date", value: 'imported_at'}
                     ]}
                 />
             </Card>
@@ -168,11 +154,11 @@
                                 </span>
                         </Item>
                         <Item>
-                            <Button size="sm" variant={getPolicyVariant(dataset.policyIntent)}>
-                                {dataset.policyIntent}
+                            <Button size="sm" variant={getPolicyVariant(dataset.policy_intent)}>
+                                {dataset.policy_intent}
                             </Button>
                         </Item>
-                        <Item>{formatDate(dataset.importedAt)}</Item>
+                        <Item>{formatDate(dataset.imported_at)}</Item>
                         <Item>
                             <Flexbox gap="0.5rem">
                                 <Button size="sm" onclick={() => goto(`/dashboard/datasets/${dataset.id}`)}>
@@ -213,7 +199,7 @@
                     </div>
                     <div class="stat-value">{data.datasets.filter(ds => ds.isPublished).length}</div>
                     <div class="stat-label">Published Datasets</div>
-                    <div class="stat-value">{data.datasets.filter(ds => ds.policyIntent === 'PUBLIC').length}</div>
+                    <div class="stat-value">{data.datasets.filter(ds => ds.policy_intent === 'PUBLIC').length}</div>
                     <div class="stat-label">Public Datasets</div>
                 </Card>
             </Col>
@@ -227,10 +213,10 @@
                                 <div class="chart-bar-inner">
                                     <div
                                             class="chart-bar-fill"
-                                            style="width: {Math.round((data.datasets.filter(ds => ds.policyIntent === policy).length / data.datasets.length) * 100)}%"
+                                            style="width: {Math.round((data.datasets.filter(ds => ds.policy_intent === policy).length / data.datasets.length) * 100)}%"
                                     ></div>
                                     <div class="chart-bar-text">
-                                        {Math.round((data.datasets.filter(ds => ds.policyIntent === policy).length / data.datasets.length) * 100)}%
+                                        {Math.round((data.datasets.filter(ds => ds.policy_intent === policy).length / data.datasets.length) * 100)}%
                                     </div>
                                 </div>
                             </div>

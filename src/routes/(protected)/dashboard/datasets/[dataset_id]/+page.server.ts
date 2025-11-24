@@ -20,6 +20,7 @@ export const actions: Actions = {
         const title = form.string('dataset.title');
         const description = form.string('dataset.description');
         const policy_intent = form.string('dataset.policy_intent');
+        const policy = form.string('dataset.policy');
 
         // Retrieve dataset
         const existingDataset = await DatasetRepository.getById(dataset_id);
@@ -36,7 +37,8 @@ export const actions: Actions = {
         const updatedDataset = await DatasetRepository.update(dataset_id, {
             title,
             description,
-            policy_intent
+            policy_intent,
+            policy
         });
 
         // 🔔 Only notify if the dataset is published (i.e., visible to consumers)

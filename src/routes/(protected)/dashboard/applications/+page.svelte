@@ -21,10 +21,6 @@
         description: "",
         inbox_url: "",
     });
-
-    function testLDNInbox(inboxUrl: string){
-
-    }
 </script>
 
 <Page title="Applications" description="Connect your own application with this dataspace.">
@@ -88,7 +84,7 @@
             </Table>
         </Card>
     </Section>
-    <pre>{JSON.stringify(data.applications, null, 2)}</pre>
+<!--    <pre>{JSON.stringify(data.applications, null, 2)}</pre>-->
 </Page>
 
 <Modal title="Add Application" bind:show={addApplicationModal.show}>

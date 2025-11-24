@@ -31,7 +31,11 @@
     {/snippet}
     {#snippet suffix()}
         {#if data.dataset?.policy_intent === 'PUBLIC'}
-            <Button href={data.dataset.download_url ?? ''}><Icon icon="download"/></Button>
+            <Flexbox gap=".5rem">
+                <Button href="{data.dataset.id}/ldes" style="white-space: nowrap"><Icon icon="clock-history" margin="right"/>Event Stream</Button>
+                <Button variant="primary" href={data.dataset.download_url ?? ''}><Icon icon="download"/></Button>
+            </Flexbox>
+
         {/if}
     {/snippet}
     <Section>
@@ -47,7 +51,7 @@
             {#if data.dataset?.published_at}<Property key="Published" value={data.dataset?.published_at?.toLocaleString()}/>{/if}
         </Card>
     </Section>
-    <pre>{JSON.stringify(data, null, 2)}</pre>
+<!--    <pre>{JSON.stringify(data, null, 2)}</pre>-->
 </Page>
 
 <style>

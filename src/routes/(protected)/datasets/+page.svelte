@@ -28,17 +28,17 @@
         <div style="margin-bottom: 1rem;">
             <h3>Sectors</h3>
             <div style="display: flex; gap: .5rem; flex-wrap: wrap;">
-                <!--{#each data.sectors as sector}-->
-                <!--    <SectorButton {sector} size="xs" style="white-space: nowrap">{sector.name}</SectorButton>-->
-                <!--{/each}-->
+                {#each data.sectors as sector}
+                    <SectorButton {sector} size="xs" style="white-space: nowrap">{sector.name}</SectorButton>
+                {/each}
             </div>
         </div>
         <div style="margin-bottom: 1rem;">
             <h3>Catalogs</h3>
             <div style="display: flex; gap: .5rem; flex-wrap: wrap;">
-                <!--{#each data.catalogs as catalog}-->
-                <!--    <Button size="sm" style="white-space: nowrap">{catalog["dct:title"]}</Button>-->
-                <!--{/each}-->
+                {#each data.catalogs as catalog}
+                    <Button size="sm" style="white-space: nowrap">{catalog.title}</Button>
+                {/each}
             </div>
         </div>
     {/snippet}
@@ -55,7 +55,6 @@
                 {/each}
             </Row>
         </Section>
-        <pre>{JSON.stringify(data.session, null, 2)}</pre>
     </Page>
 </SidebarLayout>
 

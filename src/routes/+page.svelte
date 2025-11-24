@@ -13,7 +13,6 @@ import Navbar from "$lib/client/components/navbar/Navbar.svelte";
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">
             <NavbarItem href="/" exact>Home</NavbarItem>
             <NavbarItem href="/datasets">Datasets</NavbarItem>
-            <NavbarItem href="/datasets">Catalogs</NavbarItem>
         </div>
     </div>
 </Navbar>

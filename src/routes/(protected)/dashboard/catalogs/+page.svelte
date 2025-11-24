@@ -51,7 +51,7 @@
     <Form action="?/addCatalog" method="POST" onsuccess={()=> addCatalogModal.show = false}>
         <Input required type="text" label="Name" name="catalog.title" placeholder="Enter a name..."/>
         <Input required type="textarea" label="Description" name="catalog.description" placeholder="Describe the catalog..."/>
-        <Input required type="select" label="API Standard" name="catalog.apiStandard" options={[
+        <Input required type="select" label="API Standard" name="catalog.api_standard" options={[
           { "value": "opendatasoft_explore_v2", "label": "ODS Explore API V2" },
           { "value": "ckan_api_v3", "label": "CKAN API v3" },
           { "value": "socrata", "label": "Socrata (SODA API)" },
@@ -63,9 +63,9 @@
           { "value": "google_bigquery", "label": "Google BigQuery API" },
           { "value": "aws_data_exchange", "label": "AWS Data Exchange API" }
         ]}></Input>
-        <Input required type="text" label="API endpoint" name="catalog.apiUrl" placeholder="https://api.example.com"/>
-        <Input type="text" label="API Key" name="catalog.apiKey" placeholder="*********"/>
-        <Input type="checkbox" label="Active" name="catalog.isActive"/>
+        <Input required type="text" label="API endpoint" name="catalog.api_url" placeholder="https://api.example.com"/>
+        <Input type="text" label="API Key" name="catalog.api_key" placeholder="*********"/>
+        <Input type="checkbox" label="Active" name="catalog.is_active"/>
         <Flexbox justify="flex-end">
             <Button transparent onclick={()=> addCatalogModal.show = false}>Close</Button>
             <Button variant="primary" type="submit"><Icon icon="plus-lg" margin="right"/>Add Catalog</Button>

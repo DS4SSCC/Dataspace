@@ -2,7 +2,7 @@ import {Guard} from "$lib/server/helpers/guard.helper";
 import {form} from "$lib/server/helpers/form.helper";
 import {SessionGuard} from "$lib/server/guards/session.guard";
 import {ApplicationRepository} from "$lib/server/repositories/application.repository";
-import {type Actions, error, fail} from "@sveltejs/kit";
+import {type Actions, error, fail, redirect} from "@sveltejs/kit";
 import {randomUUID} from "node:crypto";
 
 export const load = Guard.load(
@@ -13,6 +13,10 @@ export const load = Guard.load(
 )
 
 export const actions: Actions = {
+    remove: Guard.action(async ({params: {application_id}}) => {
+        await ApplicationRepository.delete(application_id)
+        redirect(302, '/dashboard/applications')
+    }, SessionGuard.ensure),
     testInbox: Guard.action(async (event) => {
         const { guard: { form }, params: {application_id} } = event;
 

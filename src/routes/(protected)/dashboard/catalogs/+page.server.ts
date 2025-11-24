@@ -18,10 +18,10 @@ export const actions: Actions = {
         const title = form.string$('catalog.title');
         const name = titleToName(title);
         const description = form.string$('catalog.description');
-        const api_standard = form.string$('catalog.apiStandard');
-        const api_url = form.string$('catalog.apiUrl');
-        const api_key = form.string$('catalog.apiKey');
-        const is_active = form.boolean$('catalog.isActive');
+        const api_standard = form.string$('catalog.api_standard');
+        const api_url = form.string$('catalog.api_url');
+        const api_key = form.string$('catalog.api_key');
+        const is_active = form.boolean$('catalog.is_active');
 
         // Validatie (optioneel)
         const allowedApiStandards = [

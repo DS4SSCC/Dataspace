@@ -25,9 +25,9 @@ export const actions: Actions = {
         let parsedUrl: URL;
         try {
             parsedUrl = new URL(inbox_url);
-            if (parsedUrl.protocol !== 'https:') {
-                throw new Error('Must use HTTPS');
-            }
+            // if (parsedUrl.protocol !== 'https:') {
+            //     throw new Error('Must use HTTPS');
+            // }
         } catch (e) {
             return fail(400, {
                 message: 'Inbox URL must be a valid HTTPS URL (e.g. https://example.com/ldn/inbox)'

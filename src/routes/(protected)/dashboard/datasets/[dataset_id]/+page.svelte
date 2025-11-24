@@ -12,6 +12,7 @@
     import {marked} from "marked";
     import Form from "$lib/client/components/form/Form.svelte";
     import Modal from "$lib/client/components/Modal.svelte";
+    import MonacoEditor from "$lib/client/components/form/inputs/MonacoEditor.svelte";
 
     let {data} = $props<{
         dataset: {
@@ -94,37 +95,33 @@
         alert(`Access request initiated for dataset "${data.dataset.title}".\n\nThis is a demonstration feature.\n\nIn a full system, this would trigger an OPA/IDS workflow.`);
     }
 
-    function handleODRLRuleView() {
-        // Simulate viewing/editing ODRL rules (out of scope)
-        const exampleODRL = {
-            "@context": "http://www.w3.org/ns/odrl.jsonld",
-            "@type": "Offer",
-            "uid": "http://example.org/policy/123",
-            "target": data.dataset.identifier,
-            "permission": [
-                {
-                    "action": ["read"],
-                    "constraint": [
-                        {
-                            "leftOperand": "http://w3id.org/odrl/vocab#spatial",
-                            "operator": "eq",
-                            "rightOperand": data.dataset.spatial || "http://www.wikidata.org/entity/Q123" // Example
-                        }
-                    ]
-                }
-            ]
-        };
-        alert(`Viewing ODRL policy for dataset "${data.dataset.title}".\n\nExample ODRL Rule:\n${JSON.stringify(exampleODRL, null, 2)}`);
-    }
+    const exampleODRL = {
+        "@context": "http://www.w3.org/ns/odrl.jsonld",
+        "@type": "Offer",
+        "uid": "http://example.org/policy/123",
+        "target": data.dataset.identifier,
+        "permission": [
+            {
+                "action": ["read"],
+                "constraint": [
+                    {
+                        "leftOperand": "http://w3id.org/odrl/vocab#spatial",
+                        "operator": "eq",
+                        "rightOperand": data.dataset.spatial || "http://www.wikidata.org/entity/Q123" // Example
+                    }
+                ]
+            }
+        ]
+    };
 
     let editMode = $state({
         description: false
     })
 
     let policyModal = $state({
-        show: false
+        show: false,
+        value: data.dataset.policy || JSON.stringify(exampleODRL, null, 2)
     })
-
 </script>
 
 <Page>
@@ -286,8 +283,17 @@
 </Page>
 
 
-<Modal title="Policy Rule" bind:show={policyModal.show}>
-    TODO
+<Modal title="Policy Rule" bind:show={policyModal.show} --width="900px">
+    <Form id="policy-form" action="?/update" onsuccess={()=> policyModal.show = false}>
+        <Input type="hidden" name="dataset.policy" value={policyModal.value}/>
+        <MonacoEditor bind:value={policyModal.value} language="json" style="min-height: 500px"/>
+    </Form>
+    {#snippet footer()}
+        <Flexbox justify="flex-end">
+            <Button transparent onclick={()=> policyModal.show = false}>Close</Button>
+            <Button variant="primary" type="submit" form="policy-form"><Icon icon="floppy-fill" margin="right"/>Save Changes</Button>
+        </Flexbox>
+    {/snippet}
 </Modal>
 
 <style lang="scss">
