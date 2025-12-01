@@ -2,7 +2,6 @@
 
 import {prisma} from '$lib/server/configurations/prisma.config';
 import type {Catalog, Dataset, PolicyIntent} from '@prisma/client';
-import {CatalogRepository} from './catalog.repository';
 
 // Type voor het importeren van een dataset (alleen metadata, geen id/createdAt)
 type ImportDatasetData = Omit<
@@ -37,7 +36,7 @@ export const DatasetRepository = {
      * @param data - Metadata conform jouw Prisma Dataset-model
      * @returns De aangemaakte Dataset
      */
-    create: (data: Omit<Dataset, 'id' | 'importedAt' | 'publishedAt'>): Promise<Dataset> =>
+    create: (data: Omit<Dataset, 'id' | 'imported_at' | 'published_at'>): Promise<Dataset> =>
         prisma.dataset.create({
             data: {
                 ...data,
@@ -52,19 +51,11 @@ export const DatasetRepository = {
      * @param data - Partiële update (alle velden optioneel)
      * @returns De bijgewerkte Dataset
      */
-    update: (id: string, data: Partial<Omit<Dataset, 'id' | 'importedAt'>>): Promise<Dataset> =>
+    update: (id: string, data: Partial<Omit<Dataset, 'id' | 'imported_at'>>) =>
         prisma.dataset.update({
             where: {id},
             data: {
-                ...data,
-                // Zet publishedAt alleen de eerste keer dat isPublished true wordt
-                published_at:
-                    data.is_published === true
-                        ? // Haal bestaande waarde op om te checken of al gepubliceerd
-                        prisma.dataset
-                            .findUnique({where: {id}})
-                            .then(ds => ds?.is_published || new Date())
-                        : undefined
+                ...data
             }
         }),
 
@@ -80,19 +71,19 @@ export const DatasetRepository = {
 
     /**
      * Verwijdert alle datasets die gekoppeld zijn aan een catalogus (handig bij catalogus-verwijdering).
-     * @param catalogId - ID van de catalogus
      * @returns Aantal verwijderde datasets
+     * @param catalog_id
      */
-    deleteByCatalogId: async (catalogId: string): Promise<number> => {
+    deleteByCatalogId: async (catalog_id: string): Promise<number> => {
         const datasets = await prisma.dataset.findMany({
-            where: {catalogId},
+            where: {catalog_id},
             select: {id: true}
         });
 
         if (datasets.length === 0) return 0;
 
         await prisma.dataset.deleteMany({
-            where: {catalogId}
+            where: {catalog_id}
         });
 
         return datasets.length;
@@ -121,6 +112,6 @@ export const DatasetRepository = {
             where: {
                 id
             },
-            include: {catalog: true}
+            include: {catalog: true, policy: true}
         }),
 };

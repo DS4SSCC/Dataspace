@@ -14,37 +14,16 @@ const service = {
 
         // Clear all policies from OPA
         const {result: policies} = await client.policy.list();
-        for (const policy of policies) {
-            await client.policy.delete(policy.id);
-        }
+        for (const policy of policies) await client.policy.delete(policy.id);
 
         // Load active policies from DB
         const dbPolicies = await prisma.policy.findMany({
             where: {active: true},
         });
 
-        for (const p of dbPolicies) {
-            await client.policy.put(p.id, p.raw);
-        }
+        for (const p of dbPolicies) await client.policy.put(p.package, p.raw);
     },
     local: {
-        async create(input: { name: string; description?: string; raw: string; active?: boolean }) {
-            const {id} = await prisma.policy.create({
-                data: {
-                    name: input.name,
-                    description: input.description,
-                    raw: input.raw,
-                    active: input.active ?? true,
-                },
-            });
-
-            // If active, load into OPA
-            if (input.active) {
-                await client.policy.put(id, input.raw);
-            }
-
-            return {id};
-        },
         async deactivate(policy: { id: string }) {
             await prisma.policy.update({
                 where: {id: policy.id},
@@ -63,6 +42,21 @@ const service = {
                 }
             }
         },
+        async load(policy: { id: string }) {
+            const _policy = await prisma.policy.findUniqueOrThrow({where: {id: policy.id}}).catch(() => undefined);
+            if (!_policy) throw new Error("policy not found");
+            const result = await client.policy.put(_policy.package, _policy.raw);
+            console.log(result);
+            return result;
+        },
+        async execute(input: any, policy: { id: string }) {
+            const _policy = await prisma.policy.findUniqueOrThrow({where: {id: policy.id}}).catch(() => undefined);
+            if (!_policy) throw new Error("policy not found");
+            await client.policy.put(_policy.package, _policy.raw);
+            return client.data.post(_policy.package, {
+                input
+            });
+        }
     },
 } satisfies Service<"policy">;
 

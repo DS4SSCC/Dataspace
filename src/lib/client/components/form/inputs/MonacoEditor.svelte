@@ -1,5 +1,6 @@
-<script lang="ts">
-    import type * as Monaco from 'monaco-editor';
+<script lang="ts" module>
+    import type * as Library from 'monaco-editor';
+    import type {MaybePromise} from "$lib/server/types/MaybePromise";
     import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
     import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
     import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
@@ -8,7 +9,19 @@
     import {onDestroy, onMount} from 'svelte';
     import {sizes, type Sizes} from '$lib/client/helpers/sizes.helper';
 
+    export type Monaco = typeof Library
+
+    export type MountFN = (input: {
+        Monaco: typeof Library,
+        editor: Library.editor.IStandaloneCodeEditor
+    }) => MaybePromise<any>
+</script>
+
+<script lang="ts">
+
+
     // Types for responsive configuration
+
     type ResponsiveFeature = 'editor' | 'linenumbers' | 'minimap';
     type ResponsiveConfig = Partial<Record<Sizes, ResponsiveFeature[]>>;
 
@@ -36,9 +49,10 @@
         style,
         ...restProps
     }:
-        Monaco.editor.IStandaloneEditorConstructionOptions &
+        Library.editor.IStandaloneEditorConstructionOptions &
         {
-            onchange?: (input: { value: string, editor: Monaco.editor.IStandaloneCodeEditor }) => unknown,
+            onchange?: (input: { value: string, editor: Library.editor.IStandaloneCodeEditor }) => unknown,
+            onmount?: MountFN[],
             roundedCorners?: boolean,
             height?: string,
             // Responsive props
@@ -54,7 +68,7 @@
 
     let ready = $state(false);
     let element = $state<HTMLDivElement>();
-    let editor: Monaco.editor.IStandaloneCodeEditor;
+    let editor: Library.editor.IStandaloneCodeEditor;
     let themeObserver: MutationObserver;
     let currentResolvedTheme = $state<string>();
     let currentBreakpoint = $state<Sizes>('xs');
@@ -108,7 +122,7 @@
         const showMinimap = isFeatureVisible('minimap');
 
         return {
-            lineNumbers: showLineNumbers ? lineNumbers : 'off' as Monaco.editor.LineNumbersType,
+            lineNumbers: showLineNumbers ? lineNumbers : 'off' as Library.editor.LineNumbersType,
             minimap: {
                 enabled: showMinimap ? (typeof minimap === 'object' ? minimap.enabled : minimap) : false
             }
@@ -144,7 +158,7 @@
     }
 
     // Function to update the Monaco editor theme
-    function updateEditorTheme(monaco: typeof Monaco) {
+    function updateEditorTheme(monaco: typeof Library) {
         const newTheme = getCurrentTheme();
         if (newTheme !== currentResolvedTheme) {
             currentResolvedTheme = newTheme;
@@ -252,6 +266,9 @@
 
             mediaQuery.addEventListener('change', handleMediaChange);
         }
+
+        if (restProps.onmount) restProps.onmount.forEach((onmount) => onmount({editor, Monaco: monaco}))
+
     });
 
     onDestroy(() => {

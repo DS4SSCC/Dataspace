@@ -2,7 +2,6 @@
     import favicon from '$lib/assets/favicon.svg';
     import Navbar from "$lib/client/components/navbar/Navbar.svelte";
     import NavbarItem from "$lib/client/components/navbar/NavbarItem.svelte";
-    import {session} from "$lib/client/stores/session.store.svelte";
 
     let {data, children} = $props();
 </script>
@@ -19,6 +18,7 @@
             <NavbarItem href="/dashboard/datasets">Datasets</NavbarItem>
             <NavbarItem href="/dashboard/requests">Requests</NavbarItem>
             <NavbarItem href="/dashboard/applications">Applications</NavbarItem>
+            <NavbarItem href="/dashboard/policies">Policies</NavbarItem>
             <NavbarItem href="/dashboard/account">Account</NavbarItem>
         </div>
         <div style="display: flex; column-gap: 1rem; align-items: stretch; padding: 0 1.5rem">

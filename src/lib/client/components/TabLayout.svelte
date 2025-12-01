@@ -16,8 +16,6 @@
 </script>
 
 <script lang="ts">
-    import Flexbox from "$lib/client/components/Flexbox.svelte";
-    import Section from "$lib/client/components/Section.svelte";
     import Button from "$lib/client/components/Button.svelte";
     import Card from "$lib/client/components/Card.svelte";
 

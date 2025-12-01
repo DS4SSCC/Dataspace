@@ -8,11 +8,12 @@
     import Icon from "$lib/client/components/icons/Icon.svelte";
     import SectorButton from "$lib/client/components/buttons/SectorButton.svelte";
     import Input from "$lib/client/components/form/Input.svelte"; // Assuming you have this
-    import {getSectorFromThemeUriOrId} from "$lib/client/helpers/sector.helper.ts";
+    import {getSectorFromThemeUriOrId} from "$lib/client/helpers/sector.helper";
     import {marked} from "marked";
     import Form from "$lib/client/components/form/Form.svelte";
     import Modal from "$lib/client/components/Modal.svelte";
     import MonacoEditor from "$lib/client/components/form/inputs/MonacoEditor.svelte";
+    import regoLang from "$lib/client/helpers/rego.lang";
 
     let {data} = $props<{
         dataset: {
@@ -114,14 +115,25 @@
         ]
     };
 
+    const exampleRego = `
+        package ds4sscc.policy.${data.dataset.id}
+
+        default hello := false
+
+        hello if input.message == "world"
+    `
+
     let editMode = $state({
         description: false
     })
 
     let policyModal = $state({
         show: false,
-        value: data.dataset.policy || JSON.stringify(exampleODRL, null, 2)
+        value: data.dataset?.policy?.raw || exampleRego
     })
+
+
+
 </script>
 
 <Page>
@@ -285,8 +297,9 @@
 
 <Modal title="Policy Rule" bind:show={policyModal.show} --width="900px">
     <Form id="policy-form" action="?/update" onsuccess={()=> policyModal.show = false}>
-        <Input type="hidden" name="dataset.policy" value={policyModal.value}/>
-        <MonacoEditor bind:value={policyModal.value} language="json" style="min-height: 500px"/>
+        <Input type="hidden" name="dataset.policy_intent" value={data.dataset.policy_intent} />
+        <Input type="hidden" name="dataset.policy.raw" value={policyModal.value}/>
+        <MonacoEditor bind:value={policyModal.value} language="rego" onmount={[regoLang]} style="min-height: 500px"/>
     </Form>
     {#snippet footer()}
         <Flexbox justify="flex-end">
