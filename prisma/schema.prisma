@@ -46,11 +46,10 @@ model Catalog {
   api_url      String // Volledige basis-URL van de API (bijv. https://data.eindhoven.nl/api/explore/v2.1)
   api_key      String? // Optionele API-sleutel voor authenticatie
   // Optionele velden die automatisch kunnen worden ingevuld of gebruikt voor beheer
-  is_active    Boolean   @default(true) // Of de catalogus momenteel wordt gesynchroniseerd
-  last_sync    DateTime? // Datum van de laatste synchronisatie
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
-  dataset      Dataset[]
+  isActive    Boolean   @default(true) // Of de catalogus momenteel wordt gesynchroniseerd
+  lastSync    DateTime? // Datum van de laatste synchronisatie
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@map("catalogs")
 }
@@ -161,4 +160,12 @@ model LDESEvent {
 
   @@index([timestamp])
   @@map("ldes_events")
+}
+
+model Policy {
+  id          String  @id @default(cuid())
+  active      Boolean @default(false)
+  name        String
+  description String?
+  raw         String
 }
