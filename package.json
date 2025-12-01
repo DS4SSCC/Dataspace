@@ -29,8 +29,11 @@
     "@prisma/client": "^6.16.3",
     "@sourceregistry/node-env": "^0.0.5",
     "@sourceregistry/node-jwt": "^0.0.1",
-    "@sourceregistry/svelte-service-manager": "^0.0.35",
+    "@sourceregistry/node-opa": "^1.0.1",
+    "@sourceregistry/svelte-service-manager": "^0.0.39",
+    "@ds4sscc/node-odrl": "^1.1.0",
     "bootstrap-icons": "^1.13.1",
-    "echarts": "^6.0.0"
+    "echarts": "^6.0.0",
+    "monaco-editor": "^0.54.0"
   }
 }

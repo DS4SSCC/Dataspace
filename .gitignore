@@ -34,5 +34,4 @@ vite.config.ts.timestamp-*
 old
 *.pem
 
-/prisma/dev.db
-
+*.db
