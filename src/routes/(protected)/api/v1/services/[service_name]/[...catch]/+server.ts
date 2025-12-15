@@ -8,4 +8,4 @@ const {endpoint, access} = ServiceManager.Base(
 
 export const {GET, PUT, POST, DELETE} = endpoint;
 
-access('policy');
+access('policy', 'dataset');

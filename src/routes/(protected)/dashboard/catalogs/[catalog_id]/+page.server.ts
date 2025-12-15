@@ -7,7 +7,7 @@ import {DatasetRepository} from "$lib/server/repositories/dataset.repository";
 import {LDESEventRepository} from "$lib/server/repositories/ldes.repository";
 import {LdnRepository} from "$lib/server/repositories/ldn.repository";
 import {randomUUID} from "node:crypto";
-import {PUBLIC_BASE_URL} from "$env/static/public"
+import {env} from "@sourceregistry/node-env";
 
 export const load = Guard.load(async ({ locals, params: { catalog_id } }) => {
     const catalog = await CatalogRepository.getById(catalog_id);
@@ -164,6 +164,8 @@ export const actions: Actions = {
         if (!selectedDataset) {
             return fail(404, { message: "Dataset not found in catalog." });
         }
+
+        const PUBLIC_BASE_URL = env.string('PUBLIC_BASE_URL')
 
         // Map to Prisma-compatible data
         const datasetData = {

@@ -1,0 +1,15 @@
+node_modules
+old
+tests
+.svelte-kit
+.idea
+vscode
+.vscode
+*.crt
+*.pem
+*.csr
+*.key
+/logs/
+.env
+.env.*
+docker-compose.*

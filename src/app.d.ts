@@ -2,6 +2,7 @@
 // for information about these interfaces
 import type {Session} from "$lib/server/guards/session.guard";
 import type {PolicyService} from "$lib/server/services/policy.service";
+import type {DatasetService} from "$lib/server/services/dataset.service";
 
 declare global {
     namespace App {
@@ -11,7 +12,8 @@ declare global {
         }
 
         interface Services {
-            policy: PolicyService
+            policy: PolicyService,
+            dataset: DatasetService
         }
 
         // interface PageData {}

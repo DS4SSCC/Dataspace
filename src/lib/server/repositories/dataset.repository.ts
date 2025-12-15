@@ -107,8 +107,8 @@ export const DatasetRepository = {
      * @param id - Het unieke ID van de dataset in de lokale database.
      * @returns De gevonden Dataset of null als deze niet bestaat.
      */
-    getById: (id: string): Promise<Dataset | null> =>
-        prisma.dataset.findUnique({
+    getById: (id: string) =>
+        prisma.dataset.findUniqueOrThrow({
             where: {
                 id
             },
