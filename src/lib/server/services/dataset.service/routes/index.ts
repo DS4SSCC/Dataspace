@@ -1,17 +1,16 @@
 import {middleware, Router, Service} from "@sourceregistry/svelte-service-manager";
 import {DatasetRepository} from "$lib/server/repositories/dataset.repository";
 import {error} from "$lib/server/helpers/guard.helper";
-import {SessionGuard} from "$lib/server/guards/session.guard";
+import {TokenGuard} from "$lib/server/guards/token.guard";
 
 const router = Router();
 
-router.GET("/[dataset_id]", middleware(async ({params: {dataset_id}, guard: {session}}) => {
+router.GET("/[dataset_id]", middleware(async ({params: {dataset_id}, guard: {token}}) => {
     const dataset = await DatasetRepository.getById(dataset_id).catch(() => undefined);
     if (!dataset) return error(404, {message: 'Dataset not found'});
     if (dataset.policy) {
         const input = {
-            session,
-            user: session.user,
+            ...token,
             dataset
         }
         const {result} = await Service('policy').execute(input, dataset.policy)
@@ -22,6 +21,6 @@ router.GET("/[dataset_id]", middleware(async ({params: {dataset_id}, guard: {ses
     }
     const result = Service('dataset').access(dataset)
     return new Response(result);
-}, SessionGuard.require))
+}, TokenGuard.require))
 
 export default router;
