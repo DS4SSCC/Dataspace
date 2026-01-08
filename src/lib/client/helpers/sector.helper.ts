@@ -195,7 +195,7 @@ export function mapThemeUriToSector(themeUri: string, sectors: Sector[] = SECTOR
     let extractedTheme: string | null = null;
     let matchedSector: Sector | null = null;
 
-    const url = new URL(themeUri);
+    const url = new URL(themeUri ?? 'https://example.org/');
     const pathSegments = url.pathname.split('/');
     const lastSegment = pathSegments[pathSegments.length - 1];
 
