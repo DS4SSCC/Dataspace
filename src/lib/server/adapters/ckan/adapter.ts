@@ -105,7 +105,7 @@ export class CkanAdapter implements DataPortalAdapter {
             publisher: this.normalizePublisher(ckanDataset.organization),
             themes: ckanDataset.groups?.map(g => this.createThemeUri(g)) || [],
             keywords: ckanDataset.tags?.map(t => t.name) || [],
-            landingPage: `${this.baseUrl}/dataset/${ckanDataset.name}`,
+            landingPage: `${this.baseUrl}/dataset/${ckanDataset.id}`,
             distributions: ckanDataset.resources.map(res => ({
                 id: res.id,
                 title: res.name || 'Untitled Resource',

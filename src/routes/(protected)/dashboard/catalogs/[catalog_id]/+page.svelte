@@ -143,9 +143,9 @@
         {/await}
     </Section>
     <!--Debugging-->
-    <Section>
-        <pre><code>{JSON.stringify(data.localDatasets, null, 2)}</code></pre>
-    </Section>
+<!--    <Section>-->
+<!--        <pre><code>{JSON.stringify(data.localDatasets, null, 2)}</code></pre>-->
+<!--    </Section>-->
 </Page>
 
 <Modal
