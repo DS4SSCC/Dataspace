@@ -112,13 +112,14 @@ Code: `src/lib/server/repositories/ldes.repository.ts`
   "dct:license": "http://creativecommons.org/licenses/by/4.0/",
   "dcat:accessURL": "https://api.example.com/datasets/1",
   "dct:issued": "2024-01-10T10:00:00.000Z",
-  "dct:modified": "2024-01-12T10:00:00.000Z"
+  "dct:modified": "2024-01-12T10:00:00.000Z",
+  "ds:changed_fields": ["title", "description"]
 }
 ```
 
 ## Inbox Endpoint
 
-The project exposes an inbox-like endpoint at:
+The project exposes an LDES stream endpoint at:
 
 ```
 GET /datasets/{dataset_id}/ldes
@@ -126,8 +127,8 @@ POST /datasets/{dataset_id}/ldes
 ```
 
 Notes:
-- The `GET` response is an LDN inbox container with stored `LDNNotification` records.
+- The `GET` response is an LDES event stream containing `LDESEvent` records for the dataset.
 - The `POST` handler accepts a notification payload and returns success, but does not persist or process the body.
-- Despite the `/ldes` path, this endpoint currently behaves like an LDN inbox, not a full LDES stream.
+- This endpoint now reflects dataset changes; it is not an LDN inbox.
 
 Code: `src/routes/(protected)/datasets/[dataset_id]/ldes/+server.ts`

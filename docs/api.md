@@ -197,6 +197,43 @@ Notes:
 - Search matches `title`, `description`, and `identifier` (case-insensitive).
 - The response objects are intentionally minimal; only `id`, `name`, and `title` are currently returned.
 
+## LDES Stream
+
+`GET /datasets/{dataset_id}/ldes`
+
+Returns a dataset event stream with the recorded changes.
+
+Response format:
+```json
+{
+  "@context": [
+    "https://w3c.github.io/ldes/context.jsonld",
+    "https://www.w3.org/ns/ldp"
+  ],
+  "id": "/datasets/{dataset_id}/ldes",
+  "type": "ldes:EventStream",
+  "ldp:contains": [
+    {
+      "id": "ckbftk3e20000l9i7a7g1nq4m",
+      "type": "DatasetUpdated",
+      "timestamp": "2024-01-12T10:00:00.000Z",
+      "version_of": "https://example.org/datasets/ckbftk3e20000l9i7a7g1nq4m",
+      "previous": null,
+      "data": {
+        "@context": [
+          "https://www.w3.org/ns/dcat.jsonld",
+          "https://w3c.github.io/ldes/context.jsonld"
+        ],
+        "@id": "https://example.org/datasets/ckbftk3e20000l9i7a7g1nq4m",
+        "@type": "dcat:Dataset",
+        "dct:title": "Dataset Title",
+        "ds:changed_fields": ["title", "description"]
+      }
+    }
+  ]
+}
+```
+
 ## Service APIs (Separate from CKAN-style routes)
 
 The application also exposes a service layer under a different base path. These are not part of the CKAN-style `/api/{api_version}/action` endpoints.

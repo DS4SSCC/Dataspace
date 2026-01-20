@@ -75,7 +75,14 @@ export const actions: Actions = {
                 summary: `Dataset "${updatedDataset.title}" has been updated.`
             };
 
-            // 📜 Create LDES event
+            // Create LDES event
+            const changedFields: string[] = [];
+            if (existingDataset.title !== updatedDataset.title) changedFields.push('title');
+            if (existingDataset.description !== updatedDataset.description) changedFields.push('description');
+            if (existingDataset.policy_intent !== updatedDataset.policy_intent) changedFields.push('policy_intent');
+            if (existingDataset.policy_id !== updatedDataset.policy_id) changedFields.push('policy_id');
+            if (policy_raw) changedFields.push('policy.raw');
+
             await LDESEventRepository.create({
                 dataset: updatedDataset,
                 event_type: 'DatasetUpdated',
@@ -94,7 +101,8 @@ export const actions: Actions = {
                     'dct:license': updatedDataset.license,
                     'dcat:accessURL': updatedDataset.access_url,
                     'dct:issued': updatedDataset.issued?.toISOString(),
-                    'dct:modified': new Date().toISOString() // ← updated now!
+                    'dct:modified': new Date().toISOString(), // ← updated now!
+                    'ds:changed_fields': changedFields
                 }
             });
 
