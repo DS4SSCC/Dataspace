@@ -196,3 +196,30 @@ Notes:
 - `rows` is capped at 100.
 - Search matches `title`, `description`, and `identifier` (case-insensitive).
 - The response objects are intentionally minimal; only `id`, `name`, and `title` are currently returned.
+
+## Service APIs (Separate from CKAN-style routes)
+
+The application also exposes a service layer under a different base path. These are not part of the CKAN-style `/api/{api_version}/action` endpoints.
+
+### Base Path
+
+```
+/api/v1/services/{service_name}
+```
+
+Only the `policy` and `dataset` services are currently enabled.
+
+### Dataset Service
+
+`GET /api/v1/services/dataset/{dataset_id}`
+
+Behavior:
+- Requires token-based access via the service guard.
+- Loads the dataset by id.
+- If a policy is attached, OPA is executed with `{ token, dataset }` as input.
+- If `result.allowed` is falsy, the request is rejected with 403.
+- If allowed, a dataset access response is returned by the dataset service.
+
+Code:
+- `src/lib/server/services/dataset.service/routes/index.ts`
+- `src/routes/(protected)/api/v1/services/[service_name]/[...catch]/+server.ts`
