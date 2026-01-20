@@ -131,9 +131,3 @@ Notes:
 - Despite the `/ldes` path, this endpoint currently behaves like an LDN inbox, not a full LDES stream.
 
 Code: `src/routes/(protected)/datasets/[dataset_id]/ldes/+server.ts`
-
-## Current Gaps
-
-- There is no dedicated LDES stream endpoint that returns `LDESEvent` records.
-- The `/datasets/{dataset_id}/ldes` route name can be misleading, since it exposes LDN inbox data.
-*** End Patch"}`
