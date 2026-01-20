@@ -21,7 +21,7 @@ export const actions: Actions = {
         if (!dataset_id) return fail(400)
         const title = form.string('dataset.title');
         const description = form.string('dataset.description');
-        const policy_intent = form.enum$('dataset.policy_intent', PolicyIntent, ({value}) => `Invalid policy intent ${value}`);
+        const policy_intent = form.enum('dataset.policy_intent', PolicyIntent);
         const policy_raw = form.string('dataset.policy.raw');
 
         // Retrieve dataset
@@ -29,9 +29,10 @@ export const actions: Actions = {
         if (!existingDataset) return fail(404, {message: 'Dataset not found'});
 
 
+        const effectivePolicyIntent = policy_intent ?? existingDataset.policy_intent;
         let policy_id = existingDataset.policy_id;
 
-        if (policy_intent === 'RESTRICTED' && !policy_id) {
+        if (effectivePolicyIntent === 'RESTRICTED' && !policy_id) {
             const {id} = await PolicyRepository.create({
                 package: `ds4sscc/policy/${dataset_id}`,
                 name: `policy@${existingDataset.id}`,
@@ -51,7 +52,7 @@ export const actions: Actions = {
         const updatedDataset = await DatasetRepository.update(dataset_id, {
             title,
             description,
-            policy_intent,
+            policy_intent: effectivePolicyIntent,
             policy_id
         });
 

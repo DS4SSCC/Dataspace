@@ -124,6 +124,7 @@
     `
 
     let editMode = $state({
+        title: false,
         description: false
     })
 
@@ -131,14 +132,28 @@
         show: false,
         value: data.dataset?.policy?.raw || exampleRego
     })
-
-
-
 </script>
 
 <Page>
     <Section>
-        <h1>{data.dataset?.title}</h1>
+        <Flexbox align="center" gap="0.5rem" style="margin-bottom: 1rem">
+            {#if editMode.title}
+                <Form action="?/update" id="title-form" onsuccess={()=> editMode.title = false}>
+                    <Input name="dataset.title" value={data.dataset?.title} placeholder="Dataset title"/>
+                </Form>
+                <Button form="title-form" type="submit" variant="primary">
+                    <Icon icon="floppy-fill"/>
+                </Button>
+                <Button onclick={()=> editMode.title = false}>
+                    Cancel
+                </Button>
+            {:else}
+                <h1 style="margin-bottom: 0">{data.dataset?.title}</h1>
+                <Button onclick={()=> editMode.title = true}>
+                    <Icon icon="pencil-fill"/>
+                </Button>
+            {/if}
+        </Flexbox>
         <Flexbox gap="1rem" align="center">
             {#if currentSector}
                 <SectorButton sector={currentSector} size="xs"/>
